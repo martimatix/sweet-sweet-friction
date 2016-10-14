@@ -2,6 +2,7 @@ import Html exposing (Html)
 import Html.App as App
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
+import Svg.Lazy exposing (lazy)
 import AnimationFrame
 
 
@@ -39,7 +40,10 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     Tick newTime ->
-      (model + 1, Cmd.none)
+      if model > 105 then
+        (0, Cmd.none)
+      else
+        (model + 1, Cmd.none)
 
 
 
@@ -57,10 +61,15 @@ subscriptions model =
 
 view : Model -> Html Msg
 view model =
+  svg [ viewBox "0 0 100 500", width "300px" ]
+    [ lazy myCircle model
+    ]
+
+
+myCircle : Float -> Svg a
+myCircle model =
   let
     y =
-      toString (model * -2.5 + 100)
+      toString (model * -5 + 500)
   in
-    svg [ viewBox "0 0 100 100", width "300px" ]
-      [ circle [ cx "50", cy y, r "45", fill "#0B79CE" ] []
-      ]
+    circle [ cx "50", cy y, r "45", fill "#0B79CE" ] []
