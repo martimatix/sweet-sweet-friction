@@ -2,8 +2,8 @@ import Html exposing (Html)
 import Html.App as App
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
-import Svg.Lazy exposing (lazy)
 import AnimationFrame
+import CircularCollision as CC
 
 
 main : Program Never
@@ -40,7 +40,7 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     Tick newTime ->
-      if model > 105 then
+      if model > 200 then
         (0, Cmd.none)
       else
         (model + 1, Cmd.none)
@@ -62,7 +62,7 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
   svg [ viewBox "0 0 100 500", width "300px" ]
-    [ lazy myCircle model
+    [ myCircle model
     ]
 
 
@@ -70,6 +70,6 @@ myCircle : Float -> Svg a
 myCircle model =
   let
     y =
-      toString (model * -5 + 500)
+      toString (model * -3 + 500)
   in
     circle [ cx "50", cy y, r "45", fill "#0B79CE" ] []
