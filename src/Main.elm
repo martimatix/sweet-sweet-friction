@@ -23,14 +23,14 @@ main =
 
 
 type alias Model =
-    { fixedCircle : Circle
-    , dynamicCircle : Circle
+    { stationaryCircle : Circle
+    , movingCircle : Circle
     }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model (Circle 50 0 45) (Circle 50 0 45)
+    ( Model (Circle 30 30 20) (Circle 50 0 45)
     , Cmd.none
     )
 
@@ -47,10 +47,10 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Tick newTime ->
-            if model.dynamicCircle.cy > 200 then
+            if model.movingCircle.cy > 200 then
                 init
             else
-                { model | dynamicCircle = advanceCircle model.dynamicCircle } ! []
+                { model | movingCircle = advanceCircle model.movingCircle } ! []
 
 
 advanceCircle : Circle -> Circle
@@ -74,19 +74,30 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
     svg [ viewBox "0 0 100 500", width "300px" ]
-        [ myCircle model
+        [ movingCircle model.movingCircle
+        , circleToSvg model.stationaryCircle "#0B79CE"
         ]
 
 
-myCircle : Model -> Svg a
-myCircle model =
+movingCircle : Circle -> Svg a
+movingCircle circle =
     let
-        y =
-            circleYPosition model.dynamicCircle
+        circleYPosition =
+            circle.cy * -3 + 500
     in
-        circle [ cx "50", cy y, r "45", fill "#0B79CE" ] []
+        circleToSvg { circle | cy = circleYPosition } "#89fb5e"
 
 
-circleYPosition : Circle -> String
-circleYPosition circle =
-    toString (circle.cy * -3 + 500)
+circleToSvg : Circle -> String -> Svg a
+circleToSvg circle fillColour =
+    let
+        xCentre =
+            toString circle.cx
+
+        yCentre =
+            toString circle.cy
+
+        radius =
+            toString circle.radius
+    in
+        Svg.circle [ cx xCentre, cy yCentre, r radius, fill fillColour ] []
