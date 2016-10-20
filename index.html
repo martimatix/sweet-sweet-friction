@@ -8510,12 +8510,15 @@ var _user$project$Main$view = function (model) {
 				A2(_user$project$Main$circleToSvg, model.stationaryCircle, '#0B79CE')
 			]));
 };
-var _user$project$Main$nextVelocity = F2(
-	function (model, colliding) {
-		var velocity = model.velocity;
-		var movingCircle = model.movingCircle;
-		var stationaryCircle = model.stationaryCircle;
-		return colliding ? A3(_user$project$CircularCollision$velocityAfterCollision, stationaryCircle, movingCircle, velocity) : model.velocity;
+var _user$project$Main$nextVelocity = F3(
+	function (movingCircle, model, colliding) {
+		if (colliding) {
+			var velocity = model.velocity;
+			var stationaryCircle = model.stationaryCircle;
+			return A3(_user$project$CircularCollision$velocityAfterCollision, stationaryCircle, movingCircle, velocity);
+		} else {
+			return model.velocity;
+		}
 	});
 var _user$project$Main$advanceCircle = F2(
 	function (circle, _p0) {
@@ -8536,23 +8539,24 @@ var _user$project$Main$init = {
 		_user$project$Main$Model,
 		A3(_user$project$CircularCollision$Circle, 30, 100, 20),
 		A3(_user$project$CircularCollision$Circle, 50, 500, 45),
-		{ctor: '_Tuple2', _0: 0, _1: -2}),
+		{ctor: '_Tuple2', _0: 0, _1: -1}),
 	_1: _elm_lang$core$Platform_Cmd$none
 };
 var _user$project$Main$update = F2(
 	function (msg, model) {
 		var _p2 = msg;
-		if (_elm_lang$core$Native_Utils.cmp(model.movingCircle.cy, 0 - model.movingCircle.radius) < 0) {
+		if (_elm_lang$core$Native_Utils.cmp(model.movingCircle.cx, 100) > 0) {
 			return _user$project$Main$init;
 		} else {
 			var colliding = A2(_user$project$CircularCollision$collision, model.stationaryCircle, model.movingCircle);
+			var nextMovingCircle = A2(_user$project$Main$nextPosition, model, colliding);
 			return A2(
 				_elm_lang$core$Platform_Cmd_ops['!'],
 				_elm_lang$core$Native_Utils.update(
 					model,
 					{
-						movingCircle: A2(_user$project$Main$nextPosition, model, colliding),
-						velocity: A2(_user$project$Main$nextVelocity, model, colliding)
+						movingCircle: nextMovingCircle,
+						velocity: A3(_user$project$Main$nextVelocity, nextMovingCircle, model, colliding)
 					}),
 				_elm_lang$core$Native_List.fromArray(
 					[]));

@@ -31,7 +31,7 @@ type alias Model =
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model (Circle 30 100 20) (Circle 50 500 45) ( 0, -2 )
+    ( Model (Circle 30 100 20) (Circle 50 500 45) ( 0, -1 )
     , Cmd.none
     )
 
@@ -48,16 +48,19 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Tick newTime ->
-            if model.movingCircle.cy < (0 - model.movingCircle.radius) then
+            if model.movingCircle.cx > 100 then
                 init
             else
                 let
                     colliding =
                         CC.collision model.stationaryCircle model.movingCircle
+
+                    nextMovingCircle =
+                        nextPosition model colliding
                 in
                     { model
-                        | movingCircle = nextPosition model colliding
-                        , velocity = nextVelocity model colliding
+                        | movingCircle = nextMovingCircle
+                        , velocity = nextVelocity nextMovingCircle model colliding
                     }
                         ! []
 
@@ -75,22 +78,19 @@ advanceCircle circle ( x, y ) =
     Circle (circle.cx + x) (circle.cy + y) circle.radius
 
 
-nextVelocity : Model -> Bool -> Vector
-nextVelocity model colliding =
-    let
-        stationaryCircle =
-            model.stationaryCircle
+nextVelocity : Circle -> Model -> Bool -> Vector
+nextVelocity movingCircle model colliding =
+    if colliding then
+        let
+            stationaryCircle =
+                model.stationaryCircle
 
-        movingCircle =
-            model.movingCircle
-
-        velocity =
-            model.velocity
-    in
-        if colliding then
+            velocity =
+                model.velocity
+        in
             CC.velocityAfterCollision stationaryCircle movingCircle velocity
-        else
-            model.velocity
+    else
+        model.velocity
 
 
 
