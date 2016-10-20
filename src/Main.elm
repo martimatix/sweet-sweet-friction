@@ -31,7 +31,7 @@ type alias Model =
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model (Circle 30 100 20) (Circle 50 500 45) ( 0, -1 )
+    ( Model (Circle 30 10 20) (Circle 50 500 45) ( 0, -3 )
     , Cmd.none
     )
 
@@ -48,7 +48,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Tick newTime ->
-            if model.movingCircle.cx > 100 then
+            if model.movingCircle.cx > 500 then
                 init
             else
                 let
@@ -108,7 +108,7 @@ subscriptions model =
 
 view : Model -> Html Msg
 view model =
-    svg [ viewBox "0 0 100 500", width "300px" ]
+    svg [ viewBox "0 0 500 500" ]
         [ circleToSvg model.movingCircle "#18a19a"
         , circleToSvg model.stationaryCircle "#0B79CE"
         ]

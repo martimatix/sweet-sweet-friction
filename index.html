@@ -8501,8 +8501,7 @@ var _user$project$Main$view = function (model) {
 		_elm_lang$svg$Svg$svg,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$svg$Svg_Attributes$viewBox('0 0 100 500'),
-				_elm_lang$svg$Svg_Attributes$width('300px')
+				_elm_lang$svg$Svg_Attributes$viewBox('0 0 500 500')
 			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
@@ -8537,15 +8536,15 @@ var _user$project$Main$init = {
 	ctor: '_Tuple2',
 	_0: A3(
 		_user$project$Main$Model,
-		A3(_user$project$CircularCollision$Circle, 30, 100, 20),
+		A3(_user$project$CircularCollision$Circle, 30, 10, 20),
 		A3(_user$project$CircularCollision$Circle, 50, 500, 45),
-		{ctor: '_Tuple2', _0: 0, _1: -1}),
+		{ctor: '_Tuple2', _0: 0, _1: -3}),
 	_1: _elm_lang$core$Platform_Cmd$none
 };
 var _user$project$Main$update = F2(
 	function (msg, model) {
 		var _p2 = msg;
-		if (_elm_lang$core$Native_Utils.cmp(model.movingCircle.cx, 100) > 0) {
+		if (_elm_lang$core$Native_Utils.cmp(model.movingCircle.cx, 500) > 0) {
 			return _user$project$Main$init;
 		} else {
 			var colliding = A2(_user$project$CircularCollision$collision, model.stationaryCircle, model.movingCircle);
