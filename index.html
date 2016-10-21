@@ -8451,11 +8451,9 @@ var _user$project$CircularCollision$velocityAfterCollision = F3(
 	});
 var _user$project$CircularCollision$collision = F2(
 	function (circle1, circle2) {
-		var dy = circle1.cy - circle2.cy;
-		var dx = circle1.cx - circle2.cx;
-		var distance = _user$project$Vector$magnitude(
-			{ctor: '_Tuple2', _0: dx, _1: dy});
-		return _elm_lang$core$Native_Utils.cmp(distance, circle1.radius + circle2.radius) < 0;
+		var distanceBetweenCircleCentres = _user$project$Vector$magnitude(
+			A2(_user$project$CircularCollision$vectorBetweenCircleCentres, circle1, circle2));
+		return _elm_lang$core$Native_Utils.cmp(distanceBetweenCircleCentres, circle1.radius + circle2.radius) < 0;
 	});
 var _user$project$CircularCollision$Circle = F3(
 	function (a, b, c) {

@@ -18,16 +18,10 @@ type alias Circle =
 collision : Circle -> Circle -> Bool
 collision circle1 circle2 =
     let
-        dx =
-            circle1.cx - circle2.cx
-
-        dy =
-            circle1.cy - circle2.cy
-
-        distance =
-            Vector.magnitude ( dx, dy )
+        distanceBetweenCircleCentres =
+            Vector.magnitude <| vectorBetweenCircleCentres circle1 circle2
     in
-        distance < circle1.radius + circle2.radius
+        distanceBetweenCircleCentres < circle1.radius + circle2.radius
 
 
 
