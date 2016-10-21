@@ -8438,15 +8438,6 @@ var _user$project$CircularCollision$unitMirrorVector = F2(
 		return _user$project$Vector$normalise(
 			A2(_user$project$CircularCollision$vectorBetweenCircleCentres, stationaryCircle, movingCircle));
 	});
-var _user$project$CircularCollision$adjustmentToCollision = F3(
-	function (stationaryCircle, movingCircle, velocity) {
-		var negatedVelocityUnitVector = _user$project$Vector$normalise(
-			_user$project$Vector$negate(velocity));
-		var circleCentresDistance = _user$project$Vector$magnitude(
-			A2(_user$project$CircularCollision$vectorBetweenCircleCentres, stationaryCircle, movingCircle));
-		var sumCircleRadii = stationaryCircle.radius + movingCircle.radius;
-		return A2(_user$project$Vector$scale, 2 * (sumCircleRadii - circleCentresDistance), negatedVelocityUnitVector);
-	});
 var _user$project$CircularCollision$velocityAfterCollision = F3(
 	function (stationaryCircle, movingCircle, velocity) {
 		var mirror = A2(_user$project$CircularCollision$unitMirrorVector, stationaryCircle, movingCircle);
@@ -8469,17 +8460,6 @@ var _user$project$CircularCollision$collision = F2(
 var _user$project$CircularCollision$Circle = F3(
 	function (a, b, c) {
 		return {cx: a, cy: b, radius: c};
-	});
-var _user$project$CircularCollision$circleAtCollision = F3(
-	function (stationaryCircle, movingCircle, velocity) {
-		var adjustmentVector = A3(_user$project$CircularCollision$adjustmentToCollision, stationaryCircle, movingCircle, velocity);
-		var _p0 = A2(
-			_user$project$Vector$add,
-			{ctor: '_Tuple2', _0: movingCircle.cx, _1: movingCircle.cy},
-			adjustmentVector);
-		var collisionPointX = _p0._0;
-		var collisionPointY = _p0._1;
-		return A3(_user$project$CircularCollision$Circle, collisionPointX, collisionPointY, movingCircle.radius);
 	});
 var _user$project$Main$circleToSvg = F2(
 	function (circle, fillColour) {
@@ -8511,10 +8491,11 @@ var _user$project$Main$view = function (model) {
 				A2(_user$project$Main$circleToSvg, model.stationaryCircle, '#0B79CE')
 			]));
 };
-var _user$project$Main$nextVelocity = F3(
-	function (movingCircle, model, colliding) {
+var _user$project$Main$nextVelocity = F2(
+	function (model, colliding) {
 		if (colliding) {
 			var velocity = model.velocity;
+			var movingCircle = model.movingCircle;
 			var stationaryCircle = model.stationaryCircle;
 			return A3(_user$project$CircularCollision$velocityAfterCollision, stationaryCircle, movingCircle, velocity);
 		} else {
@@ -8526,10 +8507,6 @@ var _user$project$Main$advanceCircle = F2(
 		var _p1 = _p0;
 		return A3(_user$project$CircularCollision$Circle, circle.cx + _p1._0, circle.cy + _p1._1, circle.radius);
 	});
-var _user$project$Main$nextPosition = F2(
-	function (model, colliding) {
-		return colliding ? A3(_user$project$CircularCollision$circleAtCollision, model.stationaryCircle, model.movingCircle, model.velocity) : A2(_user$project$Main$advanceCircle, model.movingCircle, model.velocity);
-	});
 var _user$project$Main$Model = F3(
 	function (a, b, c) {
 		return {stationaryCircle: a, movingCircle: b, velocity: c};
@@ -8538,8 +8515,8 @@ var _user$project$Main$init = {
 	ctor: '_Tuple2',
 	_0: A3(
 		_user$project$Main$Model,
-		A3(_user$project$CircularCollision$Circle, -10, 50, 20),
-		A3(_user$project$CircularCollision$Circle, 50, 500, 45),
+		A3(_user$project$CircularCollision$Circle, -20, 50, 50),
+		A3(_user$project$CircularCollision$Circle, 50, 500, 50),
 		{ctor: '_Tuple2', _0: 0, _1: -1}),
 	_1: _elm_lang$core$Platform_Cmd$none
 };
@@ -8550,14 +8527,14 @@ var _user$project$Main$update = F2(
 			return _user$project$Main$init;
 		} else {
 			var colliding = A2(_user$project$CircularCollision$collision, model.stationaryCircle, model.movingCircle);
-			var nextMovingCircle = A2(_user$project$Main$nextPosition, model, colliding);
+			var velocity = A2(_user$project$Main$nextVelocity, model, colliding);
 			return A2(
 				_elm_lang$core$Platform_Cmd_ops['!'],
 				_elm_lang$core$Native_Utils.update(
 					model,
 					{
-						movingCircle: nextMovingCircle,
-						velocity: A3(_user$project$Main$nextVelocity, nextMovingCircle, model, colliding)
+						movingCircle: A2(_user$project$Main$advanceCircle, model.movingCircle, velocity),
+						velocity: velocity
 					}),
 				_elm_lang$core$Native_List.fromArray(
 					[]));

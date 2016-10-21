@@ -3,7 +3,6 @@ module CircularCollision
         ( Circle
         , collision
         , velocityAfterCollision
-        , circleAtCollision
         )
 
 import Vector exposing (Vector)
@@ -43,37 +42,6 @@ velocityAfterCollision stationaryCircle movingCircle velocity =
             unitMirrorVector stationaryCircle movingCircle
     in
         Vector.subtract velocity (Vector.scale (2 * Vector.dotProduct velocity mirror) mirror)
-
-
-circleAtCollision : Circle -> Circle -> Vector -> Circle
-circleAtCollision stationaryCircle movingCircle velocity =
-    let
-        adjustmentVector =
-            adjustmentToCollision stationaryCircle movingCircle velocity
-
-        ( collisionPointX, collisionPointY ) =
-            Vector.add ( movingCircle.cx, movingCircle.cy ) adjustmentVector
-    in
-        Circle collisionPointX collisionPointY movingCircle.radius
-
-
-adjustmentToCollision : Circle -> Circle -> Vector -> Vector
-adjustmentToCollision stationaryCircle movingCircle velocity =
-    let
-        sumCircleRadii =
-            stationaryCircle.radius + movingCircle.radius
-
-        circleCentresDistance =
-            Vector.magnitude <|
-                vectorBetweenCircleCentres stationaryCircle movingCircle
-
-        negatedVelocityUnitVector =
-            velocity
-                |> Vector.negate
-                |> Vector.normalise
-    in
-        Vector.scale (2 * (sumCircleRadii - circleCentresDistance)) <|
-            negatedVelocityUnitVector
 
 
 unitMirrorVector : Circle -> Circle -> Vector
