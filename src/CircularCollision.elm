@@ -83,4 +83,4 @@ unitMirrorVector stationaryCircle movingCircle =
 
 vectorBetweenCircleCentres : Circle -> Circle -> Vector
 vectorBetweenCircleCentres circle1 circle2 =
-    ( circle2.cx - circle1.cx, circle2.cx - circle2.cy )
+    ( circle2.cx - circle1.cx, circle2.cy - circle1.cy )

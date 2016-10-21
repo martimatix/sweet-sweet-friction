@@ -8431,7 +8431,7 @@ var _user$project$Vector$add = F2(
 	});
 var _user$project$CircularCollision$vectorBetweenCircleCentres = F2(
 	function (circle1, circle2) {
-		return {ctor: '_Tuple2', _0: circle2.cx - circle1.cx, _1: circle2.cx - circle2.cy};
+		return {ctor: '_Tuple2', _0: circle2.cx - circle1.cx, _1: circle2.cy - circle1.cy};
 	});
 var _user$project$CircularCollision$unitMirrorVector = F2(
 	function (stationaryCircle, movingCircle) {
@@ -8538,7 +8538,7 @@ var _user$project$Main$init = {
 	ctor: '_Tuple2',
 	_0: A3(
 		_user$project$Main$Model,
-		A3(_user$project$CircularCollision$Circle, 50, 10, 20),
+		A3(_user$project$CircularCollision$Circle, -10, 50, 20),
 		A3(_user$project$CircularCollision$Circle, 50, 500, 45),
 		{ctor: '_Tuple2', _0: 0, _1: -1}),
 	_1: _elm_lang$core$Platform_Cmd$none

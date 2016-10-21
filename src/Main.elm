@@ -32,7 +32,7 @@ type alias Model =
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model (Circle 50 10 20) (Circle 50 500 45) ( 0, -1 )
+    ( Model (Circle -10 50 20) (Circle 50 500 45) ( 0, -1 )
     , Cmd.none
     )
 
