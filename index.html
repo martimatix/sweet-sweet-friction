@@ -8387,81 +8387,83 @@ var _elm_lang$svg$Svg_Attributes$additive = _elm_lang$virtual_dom$VirtualDom$att
 var _elm_lang$svg$Svg_Attributes$accumulate = _elm_lang$virtual_dom$VirtualDom$attribute('accumulate');
 var _elm_lang$svg$Svg_Attributes$accelerate = _elm_lang$virtual_dom$VirtualDom$attribute('accelerate');
 var _elm_lang$svg$Svg_Attributes$accentHeight = _elm_lang$virtual_dom$VirtualDom$attribute('accent-height');
-var _user$project$CircularCollision$square = function (n) {
+var _user$project$Vector$square = function (n) {
 	return Math.pow(n, 2);
 };
-var _user$project$CircularCollision$hypotenuse = F2(
-	function (a, b) {
-		return _elm_lang$core$Basics$sqrt(
-			_user$project$CircularCollision$square(a) + _user$project$CircularCollision$square(b));
+var _user$project$Vector$magnitude = function (_p0) {
+	var _p1 = _p0;
+	return _elm_lang$core$Basics$sqrt(
+		_user$project$Vector$square(_p1._0) + _user$project$Vector$square(_p1._1));
+};
+var _user$project$Vector$normalise = function (_p2) {
+	var _p3 = _p2;
+	var _p5 = _p3._1;
+	var _p4 = _p3._0;
+	var length = _user$project$Vector$magnitude(
+		{ctor: '_Tuple2', _0: _p4, _1: _p5});
+	return {ctor: '_Tuple2', _0: _p4 / length, _1: _p5 / length};
+};
+var _user$project$Vector$scale = F2(
+	function (s, _p6) {
+		var _p7 = _p6;
+		return {ctor: '_Tuple2', _0: s * _p7._0, _1: s * _p7._1};
+	});
+var _user$project$Vector$negate = function (vector) {
+	return A2(_user$project$Vector$scale, -1, vector);
+};
+var _user$project$Vector$dotProduct = F2(
+	function (_p9, _p8) {
+		var _p10 = _p9;
+		var _p11 = _p8;
+		return (_p10._0 * _p11._0) + (_p10._1 * _p11._1);
+	});
+var _user$project$Vector$subtract = F2(
+	function (_p13, _p12) {
+		var _p14 = _p13;
+		var _p15 = _p12;
+		return {ctor: '_Tuple2', _0: _p14._0 - _p15._0, _1: _p14._1 - _p15._1};
+	});
+var _user$project$Vector$add = F2(
+	function (_p17, _p16) {
+		var _p18 = _p17;
+		var _p19 = _p16;
+		return {ctor: '_Tuple2', _0: _p18._0 + _p19._0, _1: _p18._1 + _p19._1};
+	});
+var _user$project$CircularCollision$vectorBetweenCircleCentres = F2(
+	function (circle1, circle2) {
+		return {ctor: '_Tuple2', _0: circle2.cx - circle1.cx, _1: circle2.cx - circle2.cy};
 	});
 var _user$project$CircularCollision$unitMirrorVector = F2(
 	function (stationaryCircle, movingCircle) {
-		var y = stationaryCircle.cy - movingCircle.cy;
-		var x = stationaryCircle.cx - movingCircle.cx;
-		var magnitude = A2(_user$project$CircularCollision$hypotenuse, x, y);
-		return {ctor: '_Tuple2', _0: x / magnitude, _1: y / magnitude};
-	});
-var _user$project$CircularCollision$normalise = function (_p0) {
-	var _p1 = _p0;
-	var _p3 = _p1._1;
-	var _p2 = _p1._0;
-	var magnitude = A2(_user$project$CircularCollision$hypotenuse, _p2, _p3);
-	return {ctor: '_Tuple2', _0: _p2 / magnitude, _1: _p3 / magnitude};
-};
-var _user$project$CircularCollision$scale = F2(
-	function (s, _p4) {
-		var _p5 = _p4;
-		return {ctor: '_Tuple2', _0: s * _p5._0, _1: s * _p5._1};
-	});
-var _user$project$CircularCollision$negate = function (vector) {
-	return A2(_user$project$CircularCollision$scale, -1, vector);
-};
-var _user$project$CircularCollision$dotProduct = F2(
-	function (_p7, _p6) {
-		var _p8 = _p7;
-		var _p9 = _p6;
-		return (_p8._0 * _p9._0) + (_p8._1 * _p9._1);
-	});
-var _user$project$CircularCollision$vectorSubtraction = F2(
-	function (_p11, _p10) {
-		var _p12 = _p11;
-		var _p13 = _p10;
-		return {ctor: '_Tuple2', _0: _p12._0 - _p13._0, _1: _p12._1 - _p13._1};
-	});
-var _user$project$CircularCollision$vectorAddition = F2(
-	function (_p15, _p14) {
-		var _p16 = _p15;
-		var _p17 = _p14;
-		return {ctor: '_Tuple2', _0: _p16._0 + _p17._0, _1: _p16._1 + _p17._1};
+		return _user$project$Vector$normalise(
+			A2(_user$project$CircularCollision$vectorBetweenCircleCentres, stationaryCircle, movingCircle));
 	});
 var _user$project$CircularCollision$adjustmentToCollision = F3(
 	function (stationaryCircle, movingCircle, velocity) {
-		var negatedVelocityUnitVector = _user$project$CircularCollision$normalise(
-			_user$project$CircularCollision$negate(velocity));
+		var negatedVelocityUnitVector = _user$project$Vector$normalise(
+			_user$project$Vector$negate(velocity));
+		var circleCentresDistance = _user$project$Vector$magnitude(
+			A2(_user$project$CircularCollision$vectorBetweenCircleCentres, stationaryCircle, movingCircle));
 		var sumCircleRadii = stationaryCircle.radius + movingCircle.radius;
-		var circleCentresY = movingCircle.cy - stationaryCircle.cy;
-		var circleCentresX = movingCircle.cx - stationaryCircle.cx;
-		var circleCentresVector = {ctor: '_Tuple2', _0: circleCentresX, _1: circleCentresY};
-		var circleCentresDistance = A2(_user$project$CircularCollision$hypotenuse, circleCentresX, circleCentresY);
-		return A2(_user$project$CircularCollision$scale, 2 * (sumCircleRadii - circleCentresDistance), negatedVelocityUnitVector);
+		return A2(_user$project$Vector$scale, 2 * (sumCircleRadii - circleCentresDistance), negatedVelocityUnitVector);
 	});
 var _user$project$CircularCollision$velocityAfterCollision = F3(
 	function (stationaryCircle, movingCircle, velocity) {
 		var mirror = A2(_user$project$CircularCollision$unitMirrorVector, stationaryCircle, movingCircle);
 		return A2(
-			_user$project$CircularCollision$vectorSubtraction,
+			_user$project$Vector$subtract,
 			velocity,
 			A2(
-				_user$project$CircularCollision$scale,
-				2 * A2(_user$project$CircularCollision$dotProduct, velocity, mirror),
+				_user$project$Vector$scale,
+				2 * A2(_user$project$Vector$dotProduct, velocity, mirror),
 				mirror));
 	});
 var _user$project$CircularCollision$collision = F2(
 	function (circle1, circle2) {
 		var dy = circle1.cy - circle2.cy;
 		var dx = circle1.cx - circle2.cx;
-		var distance = A2(_user$project$CircularCollision$hypotenuse, dx, dy);
+		var distance = _user$project$Vector$magnitude(
+			{ctor: '_Tuple2', _0: dx, _1: dy});
 		return _elm_lang$core$Native_Utils.cmp(distance, circle1.radius + circle2.radius) < 0;
 	});
 var _user$project$CircularCollision$Circle = F3(
@@ -8471,12 +8473,12 @@ var _user$project$CircularCollision$Circle = F3(
 var _user$project$CircularCollision$circleAtCollision = F3(
 	function (stationaryCircle, movingCircle, velocity) {
 		var adjustmentVector = A3(_user$project$CircularCollision$adjustmentToCollision, stationaryCircle, movingCircle, velocity);
-		var _p18 = A2(
-			_user$project$CircularCollision$vectorAddition,
+		var _p0 = A2(
+			_user$project$Vector$add,
 			{ctor: '_Tuple2', _0: movingCircle.cx, _1: movingCircle.cy},
 			adjustmentVector);
-		var collisionPointX = _p18._0;
-		var collisionPointY = _p18._1;
+		var collisionPointX = _p0._0;
+		var collisionPointY = _p0._1;
 		return A3(_user$project$CircularCollision$Circle, collisionPointX, collisionPointY, movingCircle.radius);
 	});
 var _user$project$Main$circleToSvg = F2(
@@ -8536,9 +8538,9 @@ var _user$project$Main$init = {
 	ctor: '_Tuple2',
 	_0: A3(
 		_user$project$Main$Model,
-		A3(_user$project$CircularCollision$Circle, 30, 10, 20),
+		A3(_user$project$CircularCollision$Circle, 50, 10, 20),
 		A3(_user$project$CircularCollision$Circle, 50, 500, 45),
-		{ctor: '_Tuple2', _0: 0, _1: -3}),
+		{ctor: '_Tuple2', _0: 0, _1: -1}),
 	_1: _elm_lang$core$Platform_Cmd$none
 };
 var _user$project$Main$update = F2(

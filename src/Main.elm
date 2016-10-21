@@ -5,7 +5,8 @@ import Html.App as App
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import AnimationFrame
-import CircularCollision as CC exposing (Circle, Vector)
+import CircularCollision as CC exposing (Circle)
+import Vector exposing (Vector)
 
 
 main : Program Never
@@ -31,7 +32,7 @@ type alias Model =
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model (Circle 30 10 20) (Circle 50 500 45) ( 0, -3 )
+    ( Model (Circle 50 10 20) (Circle 50 500 45) ( 0, -1 )
     , Cmd.none
     )
 
