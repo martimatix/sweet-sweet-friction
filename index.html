@@ -8501,8 +8501,10 @@ var _user$project$Update$circularCollision = function (model) {
 			velocity: A2(_user$project$Update$nextVelocity, model, colliding)
 		});
 };
-var _user$project$Update$checkOutOfBounds = function (model) {
-	return (_elm_lang$core$Native_Utils.cmp(model.movingCircle.cx, 500) > 0) ? _user$project$Model$initial : model;
+var _user$project$Update$resetIfNecessary = function (model) {
+	return (_elm_lang$core$Native_Utils.cmp(model.movingCircle.cx, 500) > 0) ? _user$project$Model$initial : ((_elm_lang$core$Native_Utils.cmp(
+		_user$project$Vector$magnitude(model.velocity),
+		1.0e-5) < 0) ? _user$project$Model$initial : model);
 };
 var _user$project$Update$applyFriction = function (model) {
 	var frictionMagnitude = 1.0e-3;
@@ -8523,7 +8525,7 @@ var _user$project$Update$update = F2(
 			_user$project$Update$advanceCircle(
 				_user$project$Update$circularCollision(
 					_user$project$Update$applyFriction(
-						_user$project$Update$checkOutOfBounds(model)))));
+						_user$project$Update$resetIfNecessary(model)))));
 	});
 var _user$project$Update$Tick = function (a) {
 	return {ctor: 'Tick', _0: a};

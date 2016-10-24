@@ -14,7 +14,7 @@ update msg model =
     case msg of
         Tick newTime ->
             model
-                |> checkOutOfBounds
+                |> resetIfNecessary
                 |> applyFriction
                 |> circularCollision
                 |> advanceCircle
@@ -39,9 +39,11 @@ applyFriction model =
         { model | velocity = nextVelocity }
 
 
-checkOutOfBounds : Model -> Model
-checkOutOfBounds model =
+resetIfNecessary : Model -> Model
+resetIfNecessary model =
     if model.movingCircle.cx > 500 then
+        Model.initial
+    else if (Vector.magnitude model.velocity) < 0.00001 then
         Model.initial
     else
         model
