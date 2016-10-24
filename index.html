@@ -8500,43 +8500,48 @@ var _user$project$Main$nextVelocity = F2(
 			return model.velocity;
 		}
 	});
-var _user$project$Main$advanceCircle = F2(
-	function (circle, _p0) {
-		var _p1 = _p0;
-		return A3(_user$project$CircularCollision$Circle, circle.cx + _p1._0, circle.cy + _p1._1, circle.radius);
-	});
+var _user$project$Main$wrapReturnType = function (model) {
+	return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+};
+var _user$project$Main$advanceCircle = function (model) {
+	var circle = model.movingCircle;
+	var _p0 = model.velocity;
+	var x = _p0._0;
+	var y = _p0._1;
+	return _elm_lang$core$Native_Utils.update(
+		model,
+		{
+			movingCircle: A3(_user$project$CircularCollision$Circle, circle.cx + x, circle.cy + y, circle.radius)
+		});
+};
+var _user$project$Main$circularCollision = function (model) {
+	var colliding = A2(_user$project$CircularCollision$collision, model.stationaryCircle, model.movingCircle);
+	return _elm_lang$core$Native_Utils.update(
+		model,
+		{
+			velocity: A2(_user$project$Main$nextVelocity, model, colliding)
+		});
+};
 var _user$project$Main$Model = F3(
 	function (a, b, c) {
 		return {stationaryCircle: a, movingCircle: b, velocity: c};
 	});
-var _user$project$Main$init = {
-	ctor: '_Tuple2',
-	_0: A3(
-		_user$project$Main$Model,
-		A3(_user$project$CircularCollision$Circle, -20, 50, 50),
-		A3(_user$project$CircularCollision$Circle, 50, 500, 50),
-		{ctor: '_Tuple2', _0: 0, _1: -1}),
-	_1: _elm_lang$core$Platform_Cmd$none
+var _user$project$Main$initialState = A3(
+	_user$project$Main$Model,
+	A3(_user$project$CircularCollision$Circle, -20, 50, 50),
+	A3(_user$project$CircularCollision$Circle, 50, 500, 50),
+	{ctor: '_Tuple2', _0: 0, _1: -1});
+var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initialState, _1: _elm_lang$core$Platform_Cmd$none};
+var _user$project$Main$checkOutOfBounds = function (model) {
+	return (_elm_lang$core$Native_Utils.cmp(model.movingCircle.cx, 500) > 0) ? _user$project$Main$initialState : model;
 };
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		var _p2 = msg;
-		if (_elm_lang$core$Native_Utils.cmp(model.movingCircle.cx, 500) > 0) {
-			return _user$project$Main$init;
-		} else {
-			var colliding = A2(_user$project$CircularCollision$collision, model.stationaryCircle, model.movingCircle);
-			var velocity = A2(_user$project$Main$nextVelocity, model, colliding);
-			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				_elm_lang$core$Native_Utils.update(
-					model,
-					{
-						movingCircle: A2(_user$project$Main$advanceCircle, model.movingCircle, velocity),
-						velocity: velocity
-					}),
-				_elm_lang$core$Native_List.fromArray(
-					[]));
-		}
+		var _p1 = msg;
+		return _user$project$Main$wrapReturnType(
+			_user$project$Main$advanceCircle(
+				_user$project$Main$circularCollision(
+					_user$project$Main$checkOutOfBounds(model))));
 	});
 var _user$project$Main$Tick = function (a) {
 	return {ctor: 'Tick', _0: a};

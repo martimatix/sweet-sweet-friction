@@ -32,9 +32,12 @@ type alias Model =
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model (Circle -20 50 50) (Circle 50 500 50) ( 0, -1 )
-    , Cmd.none
-    )
+    ( initialState, Cmd.none )
+
+
+initialState : Model
+initialState =
+    Model (Circle -20 50 50) (Circle 50 500 50) ( 0, -1 )
 
 
 
@@ -49,26 +52,45 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Tick newTime ->
-            if model.movingCircle.cx > 500 then
-                init
-            else
-                let
-                    colliding =
-                        CC.collision model.stationaryCircle model.movingCircle
-
-                    velocity =
-                        nextVelocity model colliding
-                in
-                    { model
-                        | movingCircle = advanceCircle model.movingCircle velocity
-                        , velocity = velocity
-                    }
-                        ! []
+            model
+                |> checkOutOfBounds
+                |> circularCollision
+                |> advanceCircle
+                |> wrapReturnType
 
 
-advanceCircle : Circle -> Vector -> Circle
-advanceCircle circle ( x, y ) =
-    Circle (circle.cx + x) (circle.cy + y) circle.radius
+checkOutOfBounds : Model -> Model
+checkOutOfBounds model =
+    if model.movingCircle.cx > 500 then
+        initialState
+    else
+        model
+
+
+circularCollision : Model -> Model
+circularCollision model =
+    let
+        colliding =
+            CC.collision model.stationaryCircle model.movingCircle
+    in
+        { model | velocity = nextVelocity model colliding }
+
+
+advanceCircle : Model -> Model
+advanceCircle model =
+    let
+        ( x, y ) =
+            model.velocity
+
+        circle =
+            model.movingCircle
+    in
+        { model | movingCircle = Circle (circle.cx + x) (circle.cy + y) circle.radius }
+
+
+wrapReturnType : Model -> ( Model, Cmd a )
+wrapReturnType model =
+    ( model, Cmd.none )
 
 
 nextVelocity : Model -> Bool -> Vector
