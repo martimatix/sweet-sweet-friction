@@ -15,9 +15,28 @@ update msg model =
         Tick newTime ->
             model
                 |> checkOutOfBounds
+                |> applyFriction
                 |> circularCollision
                 |> advanceCircle
                 |> wrapReturnType
+
+
+applyFriction : Model -> Model
+applyFriction model =
+    let
+        frictionMagnitude =
+            0.001
+
+        frictionVector =
+            model.velocity
+                |> Vector.normalise
+                |> Vector.negate
+                |> Vector.scale frictionMagnitude
+
+        nextVelocity =
+            Vector.add model.velocity frictionVector
+    in
+        { model | velocity = nextVelocity }
 
 
 checkOutOfBounds : Model -> Model
