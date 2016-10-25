@@ -53,14 +53,8 @@ nextVelocity : Model -> Bool -> Vector
 nextVelocity model colliding =
     if colliding then
         let
-            stationaryCircle =
-                model.stationaryCircle
-
-            movingCircle =
-                model.movingCircle
-
-            velocity =
-                model.velocity
+            { stationaryCircle, movingCircle, velocity } =
+                model
         in
             CC.velocityAfterCollision stationaryCircle movingCircle velocity
     else
@@ -82,10 +76,10 @@ advanceCircle model =
         ( x, y ) =
             model.velocity
 
-        circle =
+        { cx, cy, radius } =
             model.movingCircle
     in
-        { model | movingCircle = Circle (circle.cx + x) (circle.cy + y) circle.radius }
+        { model | movingCircle = Circle (cx + x) (cy + y) radius }
 
 
 wrapReturnType : Model -> ( Model, Cmd a )
