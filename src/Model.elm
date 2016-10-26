@@ -9,7 +9,7 @@ type alias Bounds =
 
 
 type alias Model =
-    { stationaryCircle : Circle
+    { stationaryCircles : List Circle
     , movingCircle : Circle
     , velocity : Vector
     , bounds : ( Int, Int )
@@ -18,4 +18,4 @@ type alias Model =
 
 initial : Model
 initial =
-    Model (Circle 20 50 20) (Circle 60 200 50) ( 0, -2 ) ( 300, 500 )
+    Model [ (Circle 20 50 20), (Circle 250 250 30) ] (Circle 60 200 50) ( 0, -2 ) ( 300, 500 )

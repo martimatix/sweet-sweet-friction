@@ -1,8 +1,7 @@
 module CircularCollision
     exposing
         ( Circle
-        , collision
-        , velocityAfterCollision
+        , nextVelocity
         )
 
 import Vector exposing (Vector)
@@ -13,6 +12,22 @@ type alias Circle =
     , cy : Float
     , radius : Float
     }
+
+
+nextVelocity : Vector -> Circle -> List Circle -> Vector
+nextVelocity velocity movingCircle stationaryCircles =
+    case collisionCircle movingCircle stationaryCircles of
+        Just stationaryCircle ->
+            velocityAfterCollision stationaryCircle movingCircle velocity
+
+        Nothing ->
+            velocity
+
+
+collisionCircle : Circle -> List Circle -> Maybe Circle
+collisionCircle movingCircle stationaryCircles =
+    List.filter (collision movingCircle) stationaryCircles
+        |> List.head
 
 
 collision : Circle -> Circle -> Bool

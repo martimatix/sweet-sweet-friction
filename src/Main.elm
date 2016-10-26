@@ -34,11 +34,18 @@ subscriptions model =
 
 
 view : Model -> Html Msg
-view { movingCircle, stationaryCircle, bounds } =
-    svg [ viewBox (boundsToString bounds) ]
-        [ circleToSvg movingCircle "#18a19a"
-        , circleToSvg stationaryCircle "#0B79CE"
-        ]
+view { movingCircle, stationaryCircles, bounds } =
+    let
+        svgMovingCircle =
+            circleToSvg "#18a19a" movingCircle
+
+        svgStationaryCircles =
+            List.map (circleToSvg "#0B79CE") stationaryCircles
+
+        svgCircles =
+            svgMovingCircle :: svgStationaryCircles
+    in
+        svg [ viewBox (boundsToString bounds) ] svgCircles
 
 
 boundsToString : ( Int, Int ) -> String
@@ -46,8 +53,8 @@ boundsToString ( x, y ) =
     "0 0 " ++ (toString x) ++ " " ++ (toString y)
 
 
-circleToSvg : Circle -> String -> Svg a
-circleToSvg circle fillColour =
+circleToSvg : String -> Circle -> Svg a
+circleToSvg fillColour circle =
     let
         xCentre =
             toString circle.cx

@@ -43,45 +43,22 @@ applyFriction model =
 
 resetIfNecessary : Model -> Model
 resetIfNecessary model =
-    let
-        ( x, y ) =
-            model.bounds
-
-        boundaryX =
-            toFloat x
-
-        boundaryY =
-            toFloat y
-    in
-        if model.movingCircle.cx < 0 || model.movingCircle.cx > boundaryX then
-            Model.initial
-        else if model.movingCircle.cy < 0 || model.movingCircle.cy > boundaryY then
-            Model.initial
-        else if (Vector.magnitude model.velocity) < 0.00001 then
-            Model.initial
-        else
-            model
-
-
-nextVelocity : Model -> Bool -> Vector
-nextVelocity model colliding =
-    if colliding then
-        let
-            { stationaryCircle, movingCircle, velocity } =
-                model
-        in
-            CC.velocityAfterCollision stationaryCircle movingCircle velocity
+    if (Vector.magnitude model.velocity) < 0.00001 then
+        Model.initial
     else
-        model.velocity
+        model
 
 
 circularCollision : Model -> Model
 circularCollision model =
     let
-        colliding =
-            CC.collision model.stationaryCircle model.movingCircle
+        { velocity, movingCircle, stationaryCircles } =
+            model
+
+        nextVelocity =
+            CC.nextVelocity velocity movingCircle stationaryCircles
     in
-        { model | velocity = nextVelocity model colliding }
+        { model | velocity = nextVelocity }
 
 
 wallCollision : Model -> Model
