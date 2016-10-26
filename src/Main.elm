@@ -34,11 +34,16 @@ subscriptions model =
 
 
 view : Model -> Html Msg
-view model =
-    svg [ viewBox "0 0 500 500" ]
-        [ circleToSvg model.movingCircle "#18a19a"
-        , circleToSvg model.stationaryCircle "#0B79CE"
+view { movingCircle, stationaryCircle, bounds } =
+    svg [ viewBox (boundsToString bounds) ]
+        [ circleToSvg movingCircle "#18a19a"
+        , circleToSvg stationaryCircle "#0B79CE"
         ]
+
+
+boundsToString : ( Int, Int ) -> String
+boundsToString ( x, y ) =
+    "0 0 " ++ (toString x) ++ " " ++ (toString y)
 
 
 circleToSvg : Circle -> String -> Svg a

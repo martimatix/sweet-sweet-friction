@@ -2,6 +2,7 @@ module Update exposing (update, Msg(..))
 
 import Model exposing (..)
 import CircularCollision as CC exposing (Circle)
+import WallCollision as WC
 import Vector exposing (Vector)
 
 
@@ -17,6 +18,7 @@ update msg model =
                 |> resetIfNecessary
                 |> applyFriction
                 |> circularCollision
+                |> wallCollision
                 |> advanceCircle
                 |> wrapReturnType
 
@@ -41,12 +43,24 @@ applyFriction model =
 
 resetIfNecessary : Model -> Model
 resetIfNecessary model =
-    if model.movingCircle.cx > 500 then
-        Model.initial
-    else if (Vector.magnitude model.velocity) < 0.00001 then
-        Model.initial
-    else
-        model
+    let
+        ( x, y ) =
+            model.bounds
+
+        boundaryX =
+            toFloat x
+
+        boundaryY =
+            toFloat y
+    in
+        if model.movingCircle.cx < 0 || model.movingCircle.cx > boundaryX then
+            Model.initial
+        else if model.movingCircle.cy < 0 || model.movingCircle.cy > boundaryY then
+            Model.initial
+        else if (Vector.magnitude model.velocity) < 0.00001 then
+            Model.initial
+        else
+            model
 
 
 nextVelocity : Model -> Bool -> Vector
@@ -68,6 +82,18 @@ circularCollision model =
             CC.collision model.stationaryCircle model.movingCircle
     in
         { model | velocity = nextVelocity model colliding }
+
+
+wallCollision : Model -> Model
+wallCollision model =
+    let
+        { bounds, velocity, movingCircle } =
+            model
+
+        nextVelocity =
+            WC.velocityAfterCollision bounds velocity movingCircle
+    in
+        { model | velocity = nextVelocity }
 
 
 advanceCircle : Model -> Model
