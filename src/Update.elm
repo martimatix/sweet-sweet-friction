@@ -2,7 +2,7 @@ module Update exposing (update, Msg(..))
 
 import Model exposing (..)
 import Circle
-import CircularCollision as CC
+import Circle.Collision as CC
 import WallCollision as WC
 import Vector exposing (Vector)
 

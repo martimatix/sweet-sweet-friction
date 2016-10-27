@@ -1,4 +1,4 @@
-module CircularCollision exposing (nextVelocity)
+module Circle.Collision exposing (nextVelocity)
 
 import Circle exposing (Circle)
 import Vector exposing (Vector)

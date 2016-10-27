@@ -1,7 +1,7 @@
-module CircularGrowth exposing (..)
+module Circle.Growth exposing (..)
 
 import Bounds exposing (Bounds)
-import CircularCollision as CC
+import Circle.Collision as CC
 import WallCollision as WC
 
 

@@ -7,7 +7,7 @@ import Html.App as App
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import AnimationFrame
-import CircularCollision exposing (Circle)
+import Circle exposing (Circle)
 
 
 main : Program Never
