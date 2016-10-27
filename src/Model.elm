@@ -15,4 +15,4 @@ type alias Model =
 
 initial : Model
 initial =
-    Model [ (Circle 20 50 20), (Circle 250 250 30) ] (Circle 60 200 50) ( 0, -0.5 ) ( 300, 500 )
+    Model [ (Circle 20 50 20), (Circle 250 250 30) ] (Circle 60 200 50) ( 0, -0.5 ) ( 500, 600 )
