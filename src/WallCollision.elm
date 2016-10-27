@@ -1,8 +1,8 @@
 module WallCollision exposing (..)
 
-import Model exposing (Bounds)
-import CircularCollision exposing (Circle)
+import Circle exposing (Circle)
 import Vector exposing (Vector)
+import Bounds exposing (Bounds)
 
 
 velocityAfterCollision : Bounds -> Vector -> Circle -> Vector

@@ -1,17 +1,7 @@
-module CircularCollision
-    exposing
-        ( Circle
-        , nextVelocity
-        )
+module CircularCollision exposing (nextVelocity)
 
+import Circle exposing (Circle)
 import Vector exposing (Vector)
-
-
-type alias Circle =
-    { cx : Float
-    , cy : Float
-    , radius : Float
-    }
 
 
 nextVelocity : Vector -> Circle -> List Circle -> Vector
