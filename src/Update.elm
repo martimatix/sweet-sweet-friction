@@ -3,6 +3,7 @@ module Update exposing (update, Msg(..))
 import Model exposing (..)
 import Circle
 import Circle.Collision as CC
+import Circle.Growth as CG
 import WallCollision as WC
 import Vector exposing (Vector)
 
@@ -20,6 +21,7 @@ update msg model =
                 |> circularCollision
                 |> wallCollision
                 |> advanceCircle
+                |> growCircle
                 |> wrapReturnType
 
 
@@ -72,6 +74,16 @@ advanceCircle model =
             Circle.advance model.velocity model.movingCircle
     in
         { model | movingCircle = nextMovingCircle }
+
+
+growCircle : Model -> Model
+growCircle model =
+    if Vector.magnitude model.velocity < 0.0001 then
+        { model
+            | movingCircle = CG.grow model.stationaryCircles model.movingCircle
+        }
+    else
+        model
 
 
 wrapReturnType : Model -> ( Model, Cmd a )

@@ -1,10 +1,14 @@
 module Circle.Growth exposing (..)
 
-import Bounds exposing (Bounds)
+import Circle exposing (Circle)
 import Circle.Collision as CC
-import WallCollision as WC
 
 
-grow : List Circle -> Bounds -> Circle -> Circle
-grow stationaryCircles bounds movingCircle =
-    movingCircle
+grow : List Circle -> Circle -> Circle
+grow stationaryCircles movingCircle =
+    case CC.collisionCircle movingCircle stationaryCircles of
+        Nothing ->
+            { movingCircle | radius = movingCircle.radius + 1 }
+
+        _ ->
+            movingCircle
