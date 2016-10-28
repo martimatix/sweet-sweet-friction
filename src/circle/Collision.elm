@@ -25,8 +25,14 @@ collision circle1 circle2 =
     let
         distanceBetweenCircleCentres =
             Vector.magnitude <| vectorBetweenCircleCentres circle1 circle2
+
+        tolerance =
+            0.1
+
+        collisionDistance =
+            circle1.radius + circle2.radius + tolerance
     in
-        distanceBetweenCircleCentres < circle1.radius + circle2.radius
+        distanceBetweenCircleCentres <= collisionDistance
 
 
 

@@ -6,6 +6,7 @@ import Circle.Collision as CC
 import Circle.Growth as CG
 import WallCollision as WC
 import Vector exposing (Vector)
+import Friction
 
 
 type Msg
@@ -27,20 +28,7 @@ update msg model =
 
 applyFriction : Model -> Model
 applyFriction model =
-    let
-        frictionMagnitude =
-            0.001
-
-        frictionVector =
-            model.velocity
-                |> Vector.normalise
-                |> Vector.negate
-                |> Vector.scale frictionMagnitude
-
-        nextVelocity =
-            Vector.add model.velocity frictionVector
-    in
-        { model | velocity = nextVelocity }
+    { model | velocity = Friction.apply model.velocity }
 
 
 circularCollision : Model -> Model
@@ -78,7 +66,7 @@ advanceCircle model =
 
 growCircle : Model -> Model
 growCircle model =
-    if Vector.magnitude model.velocity < 0.0001 then
+    if Vector.magnitude model.velocity == 0 then
         { model
             | movingCircle = CG.grow model.stationaryCircles model.movingCircle
         }
