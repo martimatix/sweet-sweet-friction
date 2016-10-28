@@ -1,14 +1,64 @@
-module Circle.Growth exposing (..)
+module Circle.Growth exposing (grow)
 
 import Circle exposing (Circle)
 import Circle.Collision as CC
+import Bounds exposing (Bounds)
+import WallCollision as WC
 
 
-grow : List Circle -> Circle -> Circle
-grow stationaryCircles movingCircle =
-    case CC.collisionCircle movingCircle stationaryCircles of
-        Nothing ->
-            { movingCircle | radius = movingCircle.radius + 1 }
+type alias GrowthModel =
+    { collision : Bool
+    , movingCircle : Circle
+    , stationaryCircles : List Circle
+    , bounds : Bounds
+    }
 
-        _ ->
-            movingCircle
+
+grow : Circle -> List Circle -> Bounds -> Circle
+grow movingCircle stationaryCircles bounds =
+    growthModel movingCircle stationaryCircles bounds
+        |> checkForCircularCollision
+        |> checkForWallCollision
+        |> applyGrowth
+
+
+growthModel : Circle -> List Circle -> Bounds -> GrowthModel
+growthModel =
+    GrowthModel False
+
+
+checkForCircularCollision : GrowthModel -> GrowthModel
+checkForCircularCollision model =
+    let
+        { movingCircle, stationaryCircles } =
+            model
+
+        circularCollision =
+            CC.collisionCircle movingCircle stationaryCircles
+    in
+        case circularCollision of
+            Nothing ->
+                { model | collision = model.collision || False }
+
+            _ ->
+                { model | collision = True }
+
+
+checkForWallCollision : GrowthModel -> GrowthModel
+checkForWallCollision model =
+    let
+        { bounds, movingCircle } =
+            model
+
+        wallCollision =
+            WC.collision bounds movingCircle
+    in
+        { model | collision = model.collision || wallCollision }
+
+
+applyGrowth : GrowthModel -> Circle
+applyGrowth { collision, movingCircle } =
+    if collision then
+        movingCircle
+    else
+        { movingCircle | radius = movingCircle.radius + 1 }

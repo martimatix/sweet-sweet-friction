@@ -1,4 +1,4 @@
-module WallCollision exposing (..)
+module WallCollision exposing (velocityAfterCollision, collision)
 
 import Circle exposing (Circle)
 import Vector exposing (Vector)
@@ -15,14 +15,26 @@ velocityAfterCollision bounds velocity circle =
         velocity
 
 
+collision : Bounds -> Circle -> Bool
+collision bounds circle =
+    let
+        vertical =
+            collisionWithVerticalWall bounds circle
+
+        horizontal =
+            collisionWithHorizontalWall bounds circle
+    in
+        vertical || horizontal
+
+
 collisionWithVerticalWall : Bounds -> Circle -> Bool
 collisionWithVerticalWall ( boundaryX, _ ) { cx, radius } =
-    cx - radius < 0 || cx + radius > boundaryX
+    cx - radius <= 0 || cx + radius >= boundaryX
 
 
 collisionWithHorizontalWall : Bounds -> Circle -> Bool
 collisionWithHorizontalWall ( _, boundaryY ) { cy, radius } =
-    cy - radius < 0 || cy + radius > boundaryY
+    cy - radius <= 0 || cy + radius >= boundaryY
 
 
 velocityAfterVerticalWall : Vector -> Vector

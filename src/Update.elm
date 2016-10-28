@@ -66,12 +66,16 @@ advanceCircle model =
 
 growCircle : Model -> Model
 growCircle model =
-    if Vector.magnitude model.velocity == 0 then
-        { model
-            | movingCircle = CG.grow model.stationaryCircles model.movingCircle
-        }
-    else
-        model
+    let
+        { movingCircle, stationaryCircles, bounds } =
+            model
+    in
+        if Vector.magnitude model.velocity == 0 then
+            { model
+                | movingCircle = CG.grow movingCircle stationaryCircles bounds
+            }
+        else
+            model
 
 
 wrapReturnType : Model -> ( Model, Cmd a )
