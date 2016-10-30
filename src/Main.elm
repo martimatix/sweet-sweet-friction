@@ -8,6 +8,7 @@ import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import AnimationFrame
 import Circle exposing (Circle)
+import CannonAngle
 
 
 main : Program Never
@@ -34,7 +35,7 @@ subscriptions model =
 
 
 view : Model -> Html Msg
-view { movingCircle, stationaryCircles, bounds } =
+view { movingCircle, stationaryCircles, bounds, ticks } =
     let
         svgMovingCircle =
             circleToSvg "#18a19a" movingCircle
@@ -44,13 +45,41 @@ view { movingCircle, stationaryCircles, bounds } =
 
         svgCircles =
             svgMovingCircle :: svgStationaryCircles
+
+        svgCannon =
+            cannon ticks
     in
-        svg [ viewBox (boundsToString bounds) ] svgCircles
+        svg [ viewBox (boundsToString bounds), height "600px" ] (svgCircles ++ svgCannon)
 
 
 boundsToString : ( Int, Int ) -> String
 boundsToString ( x, y ) =
     "0 0 " ++ (toString x) ++ " " ++ (toString y)
+
+
+
+-- TODO: This should not be a list
+
+
+cannon : Int -> List (Svg a)
+cannon ticks =
+    let
+        angle =
+            CannonAngle.ticksToAngle ticks
+
+        foo =
+            Debug.log "cannonAngle" angle
+    in
+        [ Svg.rect
+            [ x "150"
+            , y "400"
+            , width "50"
+            , height "100"
+            , fill "#000"
+            , transform ("rotate(" ++ (toString angle) ++ " 175 500)")
+            ]
+            []
+        ]
 
 
 circleToSvg : String -> Circle -> Svg a

@@ -23,6 +23,7 @@ update msg model =
                 |> wallCollision
                 |> advanceCircle
                 |> growCircle
+                |> incrementTick
                 |> wrapReturnType
 
 
@@ -76,6 +77,11 @@ growCircle model =
             }
         else
             model
+
+
+incrementTick : Model -> Model
+incrementTick model =
+    { model | ticks = model.ticks + 1 }
 
 
 wrapReturnType : Model -> ( Model, Cmd a )
