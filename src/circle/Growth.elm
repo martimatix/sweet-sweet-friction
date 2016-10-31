@@ -28,11 +28,8 @@ growthModel =
 
 
 checkForCircularCollision : GrowthModel -> GrowthModel
-checkForCircularCollision model =
+checkForCircularCollision ({ movingCircle, stationaryCircles } as model) =
     let
-        { movingCircle, stationaryCircles } =
-            model
-
         circularCollision =
             CC.collisionCircle movingCircle stationaryCircles
     in
@@ -45,11 +42,8 @@ checkForCircularCollision model =
 
 
 checkForWallCollision : GrowthModel -> GrowthModel
-checkForWallCollision model =
+checkForWallCollision ({ bounds, movingCircle } as model) =
     let
-        { bounds, movingCircle } =
-            model
-
         wallCollision =
             WC.collision bounds movingCircle
     in

@@ -33,11 +33,8 @@ applyFriction model =
 
 
 circularCollision : Model -> Model
-circularCollision model =
+circularCollision ({ velocity, movingCircle, stationaryCircles } as model) =
     let
-        { velocity, movingCircle, stationaryCircles } =
-            model
-
         nextVelocity =
             CC.nextVelocity velocity movingCircle stationaryCircles
     in
@@ -45,11 +42,8 @@ circularCollision model =
 
 
 wallCollision : Model -> Model
-wallCollision model =
+wallCollision ({ bounds, velocity, movingCircle } as model) =
     let
-        { bounds, velocity, movingCircle } =
-            model
-
         nextVelocity =
             WC.velocityAfterCollision bounds velocity movingCircle
     in
@@ -66,17 +60,13 @@ advanceCircle model =
 
 
 growCircle : Model -> Model
-growCircle model =
-    let
-        { movingCircle, stationaryCircles, bounds } =
-            model
-    in
-        if Vector.magnitude model.velocity == 0 then
-            { model
-                | movingCircle = CG.grow movingCircle stationaryCircles bounds
-            }
-        else
-            model
+growCircle ({ movingCircle, stationaryCircles, bounds } as model) =
+    if Vector.magnitude model.velocity == 0 then
+        { model
+            | movingCircle = CG.grow movingCircle stationaryCircles bounds
+        }
+    else
+        model
 
 
 incrementTick : Model -> Model
