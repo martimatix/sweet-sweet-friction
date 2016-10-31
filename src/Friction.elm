@@ -5,7 +5,7 @@ import Vector exposing (Vector)
 
 frictionMagnitude : Float
 frictionMagnitude =
-    0.001
+    0.007
 
 
 apply : Vector -> Vector
