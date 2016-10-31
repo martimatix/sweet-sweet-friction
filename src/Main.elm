@@ -4,6 +4,7 @@ import Model exposing (Model)
 import Update exposing (..)
 import Html exposing (Html)
 import Html.App as App
+import Html.Events exposing (onClick)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import AnimationFrame
@@ -49,7 +50,12 @@ view { movingCircle, stationaryCircles, bounds, ticks } =
         svgCannon =
             cannon ticks
     in
-        svg [ viewBox (boundsToString bounds), height "600px" ] (svgCircles ++ svgCannon)
+        svg
+            [ viewBox (boundsToString bounds)
+            , onClick FireCannon
+            , height "600px"
+            ]
+            (svgCircles ++ svgCannon)
 
 
 boundsToString : ( Int, Int ) -> String

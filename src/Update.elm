@@ -11,6 +11,7 @@ import Friction
 
 type Msg
     = Tick Float
+    | FireCannon
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -25,6 +26,9 @@ update msg model =
                 |> growCircle
                 |> incrementTick
                 |> wrapReturnType
+
+        FireCannon ->
+            Model.initial ! []
 
 
 applyFriction : Model -> Model
