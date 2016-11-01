@@ -71,10 +71,7 @@ cannon : Int -> List (Svg a)
 cannon ticks =
     let
         angle =
-            CannonAngle.ticksToAngle ticks
-
-        foo =
-            Debug.log "cannonAngle" angle
+            CannonAngle.ticksToSvgAngle ticks
     in
         [ Svg.rect
             [ x "150"

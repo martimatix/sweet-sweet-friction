@@ -1,12 +1,13 @@
 module Update exposing (update, Msg(..))
 
 import Model exposing (..)
-import Circle
+import Circle exposing (Circle)
 import Circle.Collision as CC
 import Circle.Growth as CG
 import WallCollision as WC
 import Vector exposing (Vector)
 import Friction
+import CannonAngle
 
 
 type Msg
@@ -28,7 +29,29 @@ update msg model =
                 |> wrapReturnType
 
         FireCannon ->
-            Model.initial ! []
+            let
+                nextVelocity =
+                    initialVelocity model.ticks
+            in
+                { model
+                    | velocity = nextVelocity
+                    , movingCircle = Circle 175 500 15
+                }
+                    ! []
+
+
+initialVelocity : Int -> Vector
+initialVelocity ticks =
+    let
+        angle =
+            ticks
+                |> CannonAngle.ticksToAngle
+                |> toFloat
+
+        velocityMagnitude =
+            3
+    in
+        ( 3 * cos (angle |> degrees), -3 * sin (angle |> degrees) )
 
 
 applyFriction : Model -> Model
