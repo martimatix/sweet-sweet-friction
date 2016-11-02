@@ -18,6 +18,7 @@ type alias Model =
 type State
     = Waiting
     | Travelling
+    | Growing
 
 
 initial : Model

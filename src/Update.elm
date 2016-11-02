@@ -3,10 +3,10 @@ module Update exposing (update, Msg(..))
 import Model exposing (..)
 import Circle exposing (Circle)
 import Circle.Collision as CC
-import Circle.Growth as CG
+import Circle.Growth as Growth exposing (State(..))
 import WallCollision as WC
 import Vector exposing (Vector)
-import Friction
+import Friction exposing (Result(..))
 import CannonAngle
 
 
@@ -24,11 +24,16 @@ update msg model =
                 |> wrapReturnType
 
         FireCannon ->
-            { model
-                | state = Travelling
-                , velocity = initialVelocity model.ticks
-            }
-                ! []
+            case model.state of
+                Waiting ->
+                    { model
+                        | state = Travelling
+                        , velocity = initialVelocity model.ticks
+                    }
+                        ! []
+
+                _ ->
+                    model ! []
 
 
 animate : Model -> Model
@@ -40,10 +45,13 @@ animate model =
 
         Travelling ->
             model
-                |> applyFriction
                 |> circularCollision
                 |> wallCollision
                 |> advanceCircle
+                |> applyFriction
+
+        Growing ->
+            model
                 |> growCircle
 
 
@@ -64,11 +72,6 @@ initialVelocity ticks =
             3
     in
         ( 3 * cos (angle |> degrees), -3 * sin (angle |> degrees) )
-
-
-applyFriction : Model -> Model
-applyFriction model =
-    { model | velocity = Friction.apply model.velocity }
 
 
 circularCollision : Model -> Model
@@ -98,14 +101,27 @@ advanceCircle model =
         { model | movingCircle = nextMovingCircle }
 
 
+applyFriction : Model -> Model
+applyFriction model =
+    case Friction.apply model.velocity of
+        Friction.SlowsDownCircle nextVelocity ->
+            { model | velocity = nextVelocity }
+
+        Friction.CausesStop ->
+            { model
+                | velocity = ( 0, 0 )
+                , state = Growing
+            }
+
+
 growCircle : Model -> Model
 growCircle ({ movingCircle, stationaryCircles, bounds } as model) =
-    if Vector.magnitude model.velocity == 0 then
-        { model
-            | movingCircle = CG.grow movingCircle stationaryCircles bounds
-        }
-    else
-        model
+    case Growth.grow movingCircle stationaryCircles bounds of
+        Growth.Stopped ->
+            { model | state = Waiting }
+
+        Growth.Active nextCircle ->
+            { model | movingCircle = nextCircle }
 
 
 wrapReturnType : Model -> ( Model, Cmd a )

@@ -1,4 +1,4 @@
-module Circle.Growth exposing (grow)
+module Circle.Growth exposing (grow, State(..))
 
 import Circle exposing (Circle)
 import Circle.Collision as CC
@@ -14,7 +14,12 @@ type alias GrowthModel =
     }
 
 
-grow : Circle -> List Circle -> Bounds -> Circle
+type State
+    = Active Circle
+    | Stopped
+
+
+grow : Circle -> List Circle -> Bounds -> State
 grow movingCircle stationaryCircles bounds =
     growthModel movingCircle stationaryCircles bounds
         |> checkForCircularCollision
@@ -50,9 +55,9 @@ checkForWallCollision ({ bounds, movingCircle } as model) =
         { model | collision = model.collision || wallCollision }
 
 
-applyGrowth : GrowthModel -> Circle
+applyGrowth : GrowthModel -> State
 applyGrowth { collision, movingCircle } =
     if collision then
-        movingCircle
+        Stopped
     else
-        { movingCircle | radius = movingCircle.radius + 1 }
+        Active { movingCircle | radius = movingCircle.radius + 1 }

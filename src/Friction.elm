@@ -1,6 +1,11 @@
-module Friction exposing (apply)
+module Friction exposing (Result(..), apply)
 
 import Vector exposing (Vector)
+
+
+type Result
+    = SlowsDownCircle Vector
+    | CausesStop
 
 
 frictionMagnitude : Float
@@ -8,12 +13,12 @@ frictionMagnitude =
     0.007
 
 
-apply : Vector -> Vector
+apply : Vector -> Result
 apply velocity =
     if Vector.magnitude velocity > frictionMagnitude then
-        Vector.add velocity (frictionVector velocity)
+        SlowsDownCircle (Vector.add velocity (frictionVector velocity))
     else
-        ( 0, 0 )
+        CausesStop
 
 
 frictionVector : Vector -> Vector
