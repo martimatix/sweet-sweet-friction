@@ -11,7 +11,13 @@ type alias Model =
     , velocity : Vector
     , bounds : Bounds
     , ticks : Int
+    , state : State
     }
+
+
+type State
+    = Waiting
+    | Travelling
 
 
 initial : Model
@@ -21,3 +27,4 @@ initial =
         ( 0, 0 )
         ( 500, 600 )
         0
+        Waiting

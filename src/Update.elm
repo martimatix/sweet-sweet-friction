@@ -20,24 +20,36 @@ update msg model =
     case msg of
         Tick newTime ->
             model
+                |> animate
+                |> wrapReturnType
+
+        FireCannon ->
+            { model
+                | state = Travelling
+                , velocity = initialVelocity model.ticks
+            }
+                ! []
+
+
+animate : Model -> Model
+animate model =
+    case model.state of
+        Waiting ->
+            model
+                |> incrementTick
+
+        Travelling ->
+            model
                 |> applyFriction
                 |> circularCollision
                 |> wallCollision
                 |> advanceCircle
                 |> growCircle
-                |> incrementTick
-                |> wrapReturnType
 
-        FireCannon ->
-            let
-                nextVelocity =
-                    initialVelocity model.ticks
-            in
-                { model
-                    | velocity = nextVelocity
-                    , movingCircle = Circle 175 500 15
-                }
-                    ! []
+
+incrementTick : Model -> Model
+incrementTick model =
+    { model | ticks = model.ticks + 1 }
 
 
 initialVelocity : Int -> Vector
@@ -94,11 +106,6 @@ growCircle ({ movingCircle, stationaryCircles, bounds } as model) =
         }
     else
         model
-
-
-incrementTick : Model -> Model
-incrementTick model =
-    { model | ticks = model.ticks + 1 }
 
 
 wrapReturnType : Model -> ( Model, Cmd a )
