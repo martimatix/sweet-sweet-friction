@@ -23,7 +23,7 @@ type State
 
 initial : Model
 initial =
-    Model [ (Circle 20 50 20), (Circle 250 250 30) ]
+    Model [ (Circle 20 50 20 1), (Circle 250 250 30 2) ]
         initialCircle
         ( 0, 0 )
         ( 500, 600 )
@@ -33,4 +33,4 @@ initial =
 
 initialCircle : Circle
 initialCircle =
-    (Circle 175 500 15)
+    (Circle 175 500 15 3)

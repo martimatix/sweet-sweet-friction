@@ -7,9 +7,10 @@ type alias Circle =
     { cx : Float
     , cy : Float
     , radius : Float
+    , health : Int
     }
 
 
 advance : Vector -> Circle -> Circle
-advance ( x, y ) { cx, cy, radius } =
-    Circle (cx + x) (cy + y) radius
+advance ( x, y ) ({ cx, cy } as circle) =
+    { circle | cx = (cx + x), cy = (cy + y) }
