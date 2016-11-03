@@ -15,10 +15,6 @@ type alias Vector =
     ( Float, Float )
 
 
-
--- TODO: Is there a way to define this using the (+) operator?
-
-
 add : Vector -> Vector -> Vector
 add ( a, b ) ( x, y ) =
     ( a + x, b + y )

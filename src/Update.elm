@@ -118,7 +118,18 @@ growCircle : Model -> Model
 growCircle ({ movingCircle, stationaryCircles, bounds } as model) =
     case Growth.grow movingCircle stationaryCircles bounds of
         Growth.Stopped ->
-            { model | state = Waiting }
+            let
+                nextStationaryCircles =
+                    movingCircle :: stationaryCircles
+
+                nextMovingCircle =
+                    Model.initialCircle
+            in
+                { model
+                    | state = Waiting
+                    , movingCircle = nextMovingCircle
+                    , stationaryCircles = nextStationaryCircles
+                }
 
         Growth.Active nextCircle ->
             { model | movingCircle = nextCircle }
