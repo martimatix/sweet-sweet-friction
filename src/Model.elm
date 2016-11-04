@@ -7,7 +7,7 @@ import Bounds exposing (Bounds)
 
 type alias Model =
     { stationaryCircles : List Circle
-    , movingCircle : Circle
+    , activeCircle : Circle
     , velocity : Vector
     , bounds : Bounds
     , ticks : Int

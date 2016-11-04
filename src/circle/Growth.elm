@@ -8,7 +8,7 @@ import WallCollision as WC
 
 type alias GrowthModel =
     { collision : Bool
-    , movingCircle : Circle
+    , activeCircle : Circle
     , stationaryCircles : List Circle
     , bounds : Bounds
     }
@@ -20,8 +20,8 @@ type State
 
 
 grow : Circle -> List Circle -> Bounds -> State
-grow movingCircle stationaryCircles bounds =
-    growthModel movingCircle stationaryCircles bounds
+grow activeCircle stationaryCircles bounds =
+    growthModel activeCircle stationaryCircles bounds
         |> checkForCircularCollision
         |> checkForWallCollision
         |> applyGrowth
@@ -33,22 +33,22 @@ growthModel =
 
 
 checkForCircularCollision : GrowthModel -> GrowthModel
-checkForCircularCollision ({ movingCircle, stationaryCircles } as model) =
-    { model | collision = CC.anyCollisions movingCircle stationaryCircles }
+checkForCircularCollision ({ activeCircle, stationaryCircles } as model) =
+    { model | collision = CC.anyCollisions activeCircle stationaryCircles }
 
 
 checkForWallCollision : GrowthModel -> GrowthModel
-checkForWallCollision ({ bounds, movingCircle } as model) =
+checkForWallCollision ({ bounds, activeCircle } as model) =
     let
         wallCollision =
-            WC.collision bounds movingCircle
+            WC.collision bounds activeCircle
     in
         { model | collision = model.collision || wallCollision }
 
 
 applyGrowth : GrowthModel -> State
-applyGrowth { collision, movingCircle } =
+applyGrowth { collision, activeCircle } =
     if collision then
         Stopped
     else
-        Active { movingCircle | radius = movingCircle.radius + 1 }
+        Active { activeCircle | radius = activeCircle.radius + 1 }

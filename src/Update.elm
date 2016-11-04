@@ -77,13 +77,13 @@ initialVelocity ticks =
 
 
 circularCollision : Model -> Model
-circularCollision ({ movingCircle, stationaryCircles, velocity } as model) =
+circularCollision ({ activeCircle, stationaryCircles, velocity } as model) =
     let
         ( collidingCircles, otherCircles ) =
-            CC.partitionCircles movingCircle stationaryCircles
+            CC.partitionCircles activeCircle stationaryCircles
 
         nextVelocity =
-            CC.nextVelocity velocity movingCircle collidingCircles
+            CC.nextVelocity velocity activeCircle collidingCircles
 
         damagedCollidingCircles =
             List.map CC.applyDamage collidingCircles
@@ -95,10 +95,10 @@ circularCollision ({ movingCircle, stationaryCircles, velocity } as model) =
 
 
 wallCollision : Model -> Model
-wallCollision ({ bounds, velocity, movingCircle } as model) =
+wallCollision ({ bounds, velocity, activeCircle } as model) =
     let
         nextVelocity =
-            WC.velocityAfterCollision bounds velocity movingCircle
+            WC.velocityAfterCollision bounds velocity activeCircle
     in
         { model | velocity = nextVelocity }
 
@@ -106,10 +106,10 @@ wallCollision ({ bounds, velocity, movingCircle } as model) =
 advanceCircle : Model -> Model
 advanceCircle model =
     let
-        nextMovingCircle =
-            Circle.advance model.velocity model.movingCircle
+        nextActiveCircle =
+            Circle.advance model.velocity model.activeCircle
     in
-        { model | movingCircle = nextMovingCircle }
+        { model | activeCircle = nextActiveCircle }
 
 
 applyFriction : Model -> Model
@@ -126,24 +126,24 @@ applyFriction model =
 
 
 growCircle : Model -> Model
-growCircle ({ movingCircle, stationaryCircles, bounds } as model) =
-    case Growth.grow movingCircle stationaryCircles bounds of
+growCircle ({ activeCircle, stationaryCircles, bounds } as model) =
+    case Growth.grow activeCircle stationaryCircles bounds of
         Growth.Stopped ->
             let
                 nextStationaryCircles =
-                    movingCircle :: stationaryCircles
+                    activeCircle :: stationaryCircles
 
-                nextMovingCircle =
+                nextActiveCircle =
                     Model.initialCircle
             in
                 { model
                     | state = Waiting
-                    , movingCircle = nextMovingCircle
+                    , activeCircle = nextActiveCircle
                     , stationaryCircles = nextStationaryCircles
                 }
 
-        Growth.Active nextCircle ->
-            { model | movingCircle = nextCircle }
+        Growth.Active biggerActiveCircle ->
+            { model | activeCircle = biggerActiveCircle }
 
 
 wrapReturnType : Model -> ( Model, Cmd a )

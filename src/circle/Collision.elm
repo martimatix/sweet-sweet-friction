@@ -12,10 +12,10 @@ import Vector exposing (Vector)
 
 
 nextVelocity : Vector -> Circle -> List Circle -> Vector
-nextVelocity velocity movingCircle collidingCircles =
+nextVelocity velocity activeCircle collidingCircles =
     case List.head (collidingCircles) of
         Just collidingCircle ->
-            velocityAfterCollision collidingCircle movingCircle velocity
+            velocityAfterCollision collidingCircle activeCircle velocity
 
         Nothing ->
             velocity
@@ -27,13 +27,13 @@ applyDamage circle =
 
 
 partitionCircles : Circle -> List Circle -> ( List Circle, List Circle )
-partitionCircles movingCircle stationaryCircles =
-    List.partition (collision movingCircle) stationaryCircles
+partitionCircles activeCircle stationaryCircles =
+    List.partition (collision activeCircle) stationaryCircles
 
 
 anyCollisions : Circle -> List Circle -> Bool
-anyCollisions movingCircle stationaryCircles =
-    List.filter (collision movingCircle) stationaryCircles
+anyCollisions activeCircle stationaryCircles =
+    List.filter (collision activeCircle) stationaryCircles
         |> List.isEmpty
         |> not
 
@@ -59,17 +59,17 @@ collision circle1 circle2 =
 
 
 velocityAfterCollision : Circle -> Circle -> Vector -> Vector
-velocityAfterCollision stationaryCircle movingCircle velocity =
+velocityAfterCollision stationaryCircle activeCircle velocity =
     let
         mirror =
-            unitMirrorVector stationaryCircle movingCircle
+            unitMirrorVector stationaryCircle activeCircle
     in
         Vector.subtract velocity (Vector.scale (2 * Vector.dotProduct velocity mirror) mirror)
 
 
 unitMirrorVector : Circle -> Circle -> Vector
-unitMirrorVector stationaryCircle movingCircle =
-    Vector.normalise <| vectorBetweenCircleCentres stationaryCircle movingCircle
+unitMirrorVector stationaryCircle activeCircle =
+    Vector.normalise <| vectorBetweenCircleCentres stationaryCircle activeCircle
 
 
 vectorBetweenCircleCentres : Circle -> Circle -> Vector

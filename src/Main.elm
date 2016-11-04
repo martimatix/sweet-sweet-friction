@@ -36,16 +36,16 @@ subscriptions model =
 
 
 view : Model -> Html Msg
-view { movingCircle, stationaryCircles, bounds, ticks } =
+view { activeCircle, stationaryCircles, bounds, ticks } =
     let
-        svgMovingCircle =
-            circleToSvg "#18a19a" movingCircle
+        svgActiveCircle =
+            circleToSvg "#18a19a" activeCircle
 
         svgStationaryCircles =
             List.map (circleToSvg "#0B79CE") stationaryCircles
 
         svgCircles =
-            svgMovingCircle :: svgStationaryCircles
+            svgActiveCircle :: svgStationaryCircles
 
         svgCannon =
             cannon ticks
