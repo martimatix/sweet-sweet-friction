@@ -34,16 +34,7 @@ growthModel =
 
 checkForCircularCollision : GrowthModel -> GrowthModel
 checkForCircularCollision ({ movingCircle, stationaryCircles } as model) =
-    let
-        circularCollision =
-            CC.collisionCircle movingCircle stationaryCircles
-    in
-        case circularCollision of
-            Nothing ->
-                { model | collision = model.collision || False }
-
-            _ ->
-                { model | collision = True }
+    { model | collision = CC.anyCollisions movingCircle stationaryCircles }
 
 
 checkForWallCollision : GrowthModel -> GrowthModel

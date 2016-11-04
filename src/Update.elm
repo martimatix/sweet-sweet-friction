@@ -75,12 +75,21 @@ initialVelocity ticks =
 
 
 circularCollision : Model -> Model
-circularCollision ({ velocity, movingCircle, stationaryCircles } as model) =
+circularCollision ({ movingCircle, stationaryCircles, velocity } as model) =
     let
+        ( collidingCircles, otherCircles ) =
+            CC.partitionCircles movingCircle stationaryCircles
+
         nextVelocity =
-            CC.nextVelocity velocity movingCircle stationaryCircles
+            CC.nextVelocity velocity movingCircle collidingCircles
+
+        damagedCollidingCircles =
+            List.map CC.applyDamage collidingCircles
     in
-        { model | velocity = nextVelocity }
+        { model
+            | velocity = nextVelocity
+            , stationaryCircles = damagedCollidingCircles ++ otherCircles
+        }
 
 
 wallCollision : Model -> Model

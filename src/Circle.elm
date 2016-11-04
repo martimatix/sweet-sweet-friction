@@ -7,7 +7,7 @@ type alias Circle =
     { cx : Float
     , cy : Float
     , radius : Float
-    , health : Int
+    , hitPoints : Int
     }
 
 

@@ -1,23 +1,41 @@
-module Circle.Collision exposing (nextVelocity, collisionCircle)
+module Circle.Collision
+    exposing
+        ( nextVelocity
+        , anyCollisions
+        , partitionCircles
+        , velocityAfterCollision
+        , applyDamage
+        )
 
 import Circle exposing (Circle)
 import Vector exposing (Vector)
 
 
 nextVelocity : Vector -> Circle -> List Circle -> Vector
-nextVelocity velocity movingCircle stationaryCircles =
-    case collisionCircle movingCircle stationaryCircles of
-        Just stationaryCircle ->
-            velocityAfterCollision stationaryCircle movingCircle velocity
+nextVelocity velocity movingCircle collidingCircles =
+    case List.head (collidingCircles) of
+        Just collidingCircle ->
+            velocityAfterCollision collidingCircle movingCircle velocity
 
         Nothing ->
             velocity
 
 
-collisionCircle : Circle -> List Circle -> Maybe Circle
-collisionCircle movingCircle stationaryCircles =
+applyDamage : Circle -> Circle
+applyDamage circle =
+    { circle | hitPoints = circle.hitPoints - 1 }
+
+
+partitionCircles : Circle -> List Circle -> ( List Circle, List Circle )
+partitionCircles movingCircle stationaryCircles =
+    List.partition (collision movingCircle) stationaryCircles
+
+
+anyCollisions : Circle -> List Circle -> Bool
+anyCollisions movingCircle stationaryCircles =
     List.filter (collision movingCircle) stationaryCircles
-        |> List.head
+        |> List.isEmpty
+        |> not
 
 
 collision : Circle -> Circle -> Bool
