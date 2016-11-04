@@ -71,7 +71,9 @@ initialVelocity ticks =
         velocityMagnitude =
             3
     in
-        ( 3 * cos (angle |> degrees), -3 * sin (angle |> degrees) )
+        ( velocityMagnitude * cos (angle |> degrees)
+        , velocityMagnitude * sin (angle |> degrees) |> negate
+        )
 
 
 circularCollision : Model -> Model
