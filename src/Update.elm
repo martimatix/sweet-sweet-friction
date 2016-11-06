@@ -86,7 +86,9 @@ circularCollision ({ activeCircle, stationaryCircles, velocity } as model) =
             CC.nextVelocity velocity activeCircle collidingCircles
 
         damagedCollidingCircles =
-            List.map CC.applyDamage collidingCircles
+            collidingCircles
+                |> List.map CC.applyDamage
+                |> List.filter (\circle -> circle.hitPoints > 0)
     in
         { model
             | velocity = nextVelocity
