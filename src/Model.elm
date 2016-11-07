@@ -26,11 +26,31 @@ initial =
     Model [ (Circle 20 50 20 1), (Circle 250 250 30 2) ]
         initialCircle
         ( 0, 0 )
-        ( 500, 600 )
+        bounds
         0
         Waiting
 
 
 initialCircle : Circle
 initialCircle =
-    (Circle 175 500 15 3)
+    let
+        ( x, y ) =
+            bounds
+
+        cx =
+            (x // 2)
+                |> toFloat
+
+        cy =
+            (y - distanceOfCannonFromFloor)
+                |> toFloat
+
+        distanceOfCannonFromFloor =
+            100
+    in
+        (Circle cx cy 15 3)
+
+
+bounds : Bounds
+bounds =
+    ( 500, 600 )

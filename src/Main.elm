@@ -10,6 +10,7 @@ import Svg.Attributes exposing (..)
 import AnimationFrame
 import Circle exposing (Circle)
 import CannonAngle
+import Bounds exposing (Bounds)
 
 
 main : Program Never
@@ -48,17 +49,18 @@ view { activeCircle, stationaryCircles, bounds, ticks } =
             svgActiveCircle :: svgStationaryCircles
 
         svgCannon =
-            cannon ticks
+            cannon bounds ticks
     in
         svg
             [ viewBox (boundsToString bounds)
             , onClick FireCannon
             , height "600px"
+            , Svg.Attributes.style "background: yellow"
             ]
             (svgCircles ++ svgCannon)
 
 
-boundsToString : ( Int, Int ) -> String
+boundsToString : Bounds -> String
 boundsToString ( x, y ) =
     "0 0 " ++ (toString x) ++ " " ++ (toString y)
 
@@ -67,22 +69,58 @@ boundsToString ( x, y ) =
 -- TODO: This should not be a list
 
 
-cannon : Int -> List (Svg a)
-cannon ticks =
+cannon : Bounds -> Int -> List (Svg a)
+cannon ( boundsX, boundsY ) ticks =
     let
+        initialCircle =
+            Model.initialCircle
+
+        cannonX =
+            boundsX // 2 - cannonWidth // 2
+
+        cannonY =
+            round initialCircle.cy - cannonHeight
+
+        cannonWidth =
+            50
+
+        cannonHeight =
+            100
+
         angle =
             CannonAngle.ticksToSvgAngle ticks
+
+        rotationPointX =
+            boundsX // 2
+
+        rotationPointY =
+            cannonY + cannonHeight
     in
         [ Svg.rect
-            [ x "150"
-            , y "400"
-            , width "50"
-            , height "100"
+            [ x (toString cannonX)
+            , y (toString cannonY)
+            , width (toString cannonWidth)
+            , height (toString cannonHeight)
             , fill "#000"
-            , transform ("rotate(" ++ (toString angle) ++ " 175 500)")
+            , transform (cannonTransform angle rotationPointX rotationPointY)
             ]
             []
         ]
+
+
+cannonTransform : Int -> Int -> Int -> String
+cannonTransform angle rotationPointX rotationPointY =
+    let
+        angleString =
+            toString angle
+
+        x =
+            toString rotationPointX
+
+        y =
+            toString rotationPointY
+    in
+        "rotate(" ++ angleString ++ " " ++ x ++ " " ++ y ++ ")"
 
 
 circleToSvg : String -> Circle -> Svg a

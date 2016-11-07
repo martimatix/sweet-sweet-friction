@@ -51,4 +51,4 @@ applyGrowth { collision, activeCircle } =
     if collision then
         Stopped
     else
-        Active { activeCircle | radius = activeCircle.radius + 1 }
+        Active { activeCircle | radius = activeCircle.radius + 0.5 }
