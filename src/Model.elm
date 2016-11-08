@@ -10,6 +10,7 @@ type alias Model =
     , activeCircle : Circle
     , velocity : Vector
     , bounds : Bounds
+    , cannonMargin : Int
     , ticks : Int
     , state : State
     }
@@ -27,6 +28,7 @@ initial =
         initialCircle
         ( 0, 0 )
         bounds
+        150
         0
         Waiting
 
@@ -46,7 +48,7 @@ initialCircle =
                 |> toFloat
 
         distanceOfCannonFromFloor =
-            100
+            20
     in
         (Circle cx cy 15 3)
 

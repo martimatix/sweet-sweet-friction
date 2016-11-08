@@ -12,7 +12,7 @@ import Circle exposing (Circle)
 
 
 view : Model -> Html Msg
-view { activeCircle, stationaryCircles, bounds, ticks } =
+view { activeCircle, stationaryCircles, bounds, ticks, cannonMargin } =
     let
         svgActiveCircle =
             circleToSvg "#18a19a" activeCircle
@@ -34,6 +34,7 @@ view { activeCircle, stationaryCircles, bounds, ticks } =
             ]
             [ g [] svgCircles
             , svgCannon
+            , svgCannonMargin cannonMargin bounds
             ]
 
 
@@ -112,5 +113,23 @@ circleToSvg fillColour circle =
             , cy yCentre
             , r radius
             , fill fillColour
+            ]
+            []
+
+
+svgCannonMargin : Int -> Bounds -> Svg a
+svgCannonMargin margin ( boundsX, boundsY ) =
+    let
+        marginHeight =
+            toString (boundsY - margin)
+    in
+        Svg.line
+            [ x1 "0"
+            , y1 marginHeight
+            , x2 (toString boundsX)
+            , y2 marginHeight
+            , strokeDasharray "10, 5"
+            , strokeWidth "5"
+            , stroke "black"
             ]
             []
