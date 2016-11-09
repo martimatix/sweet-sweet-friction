@@ -12,7 +12,7 @@ import Circle exposing (Circle)
 
 
 view : Model -> Html Msg
-view { activeCircle, stationaryCircles, bounds, ticks, cannonMargin } =
+view { activeCircle, stationaryCircles, gameBounds, safeBounds, ticks } =
     let
         svgActiveCircle =
             circleToSvg "#18a19a" activeCircle
@@ -24,17 +24,17 @@ view { activeCircle, stationaryCircles, bounds, ticks, cannonMargin } =
             svgActiveCircle :: svgStationaryCircles
 
         svgCannon =
-            cannon bounds ticks
+            cannon gameBounds ticks
     in
         svg
-            [ viewBox (boundsToString bounds)
+            [ viewBox (boundsToString gameBounds)
             , onClick FireCannon
             , height "600px"
             , Svg.Attributes.style "background: yellow"
             ]
             [ g [] svgCircles
             , svgCannon
-            , svgCannonMargin cannonMargin bounds
+            , svgCannonMargin safeBounds
             ]
 
 
@@ -117,19 +117,15 @@ circleToSvg fillColour circle =
             []
 
 
-svgCannonMargin : Int -> Bounds -> Svg a
-svgCannonMargin margin ( boundsX, boundsY ) =
-    let
-        marginHeight =
-            toString (boundsY - margin)
-    in
-        Svg.line
-            [ x1 "0"
-            , y1 marginHeight
-            , x2 (toString boundsX)
-            , y2 marginHeight
-            , strokeDasharray "10, 5"
-            , strokeWidth "5"
-            , stroke "black"
-            ]
-            []
+svgCannonMargin : Bounds -> Svg a
+svgCannonMargin ( safeBoundsX, safeBoundsY ) =
+    Svg.line
+        [ x1 "0"
+        , y1 (toString safeBoundsY)
+        , x2 (toString safeBoundsX)
+        , y2 (toString safeBoundsY)
+        , strokeDasharray "10, 5"
+        , strokeWidth "5"
+        , stroke "black"
+        ]
+        []

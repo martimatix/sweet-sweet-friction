@@ -97,10 +97,10 @@ circularCollision ({ activeCircle, stationaryCircles, velocity } as model) =
 
 
 wallCollision : Model -> Model
-wallCollision ({ bounds, velocity, activeCircle } as model) =
+wallCollision ({ gameBounds, velocity, activeCircle } as model) =
     let
         nextVelocity =
-            WC.velocityAfterCollision bounds velocity activeCircle
+            WC.velocityAfterCollision gameBounds velocity activeCircle
     in
         { model | velocity = nextVelocity }
 
@@ -128,8 +128,8 @@ applyFriction model =
 
 
 growCircle : Model -> Model
-growCircle ({ activeCircle, stationaryCircles, bounds } as model) =
-    case Growth.grow activeCircle stationaryCircles bounds of
+growCircle ({ activeCircle, stationaryCircles, safeBounds } as model) =
+    case Growth.grow activeCircle stationaryCircles safeBounds of
         Growth.Stopped ->
             let
                 nextStationaryCircles =
