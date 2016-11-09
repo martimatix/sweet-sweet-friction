@@ -2,7 +2,6 @@ module Circle.Growth exposing (grow, State(..))
 
 import Circle exposing (Circle)
 import Circle.Collision as CC
-import Bounds exposing (Bounds)
 import WallCollision as WC
 
 
@@ -10,7 +9,6 @@ type alias GrowthModel =
     { collision : Bool
     , activeCircle : Circle
     , stationaryCircles : List Circle
-    , bounds : Bounds
     }
 
 
@@ -19,15 +17,15 @@ type State
     | Stopped
 
 
-grow : Circle -> List Circle -> Bounds -> State
-grow activeCircle stationaryCircles bounds =
-    growthModel activeCircle stationaryCircles bounds
+grow : Circle -> List Circle -> State
+grow activeCircle stationaryCircles =
+    growthModel activeCircle stationaryCircles
         |> checkForCircularCollision
         |> checkForWallCollision
         |> applyGrowth
 
 
-growthModel : Circle -> List Circle -> Bounds -> GrowthModel
+growthModel : Circle -> List Circle -> GrowthModel
 growthModel =
     GrowthModel False
 
@@ -38,10 +36,10 @@ checkForCircularCollision ({ activeCircle, stationaryCircles } as model) =
 
 
 checkForWallCollision : GrowthModel -> GrowthModel
-checkForWallCollision ({ bounds, activeCircle } as model) =
+checkForWallCollision ({ activeCircle } as model) =
     let
         wallCollision =
-            WC.collision bounds activeCircle
+            WC.collision activeCircle
     in
         { model | collision = model.collision || wallCollision }
 

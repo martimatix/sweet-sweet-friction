@@ -12,7 +12,7 @@ import Circle exposing (Circle)
 
 
 view : Model -> Html Msg
-view { activeCircle, stationaryCircles, gameBounds, safeBounds, ticks } =
+view { activeCircle, stationaryCircles, ticks } =
     let
         svgActiveCircle =
             circleToSvg "#18a19a" activeCircle
@@ -24,17 +24,17 @@ view { activeCircle, stationaryCircles, gameBounds, safeBounds, ticks } =
             svgActiveCircle :: svgStationaryCircles
 
         svgCannon =
-            cannon gameBounds ticks
+            cannon ticks
     in
         svg
-            [ viewBox (boundsToString gameBounds)
+            [ viewBox (boundsToString Bounds.game)
             , onClick FireCannon
             , height "600px"
             , Svg.Attributes.style "background: yellow"
             ]
             [ g [] svgCircles
             , svgCannon
-            , svgCannonMargin safeBounds
+            , svgCannonMargin
             ]
 
 
@@ -43,9 +43,12 @@ boundsToString ( x, y ) =
     "0 0 " ++ (toString x) ++ " " ++ (toString y)
 
 
-cannon : Bounds -> Int -> Svg a
-cannon ( boundsX, boundsY ) ticks =
+cannon : Int -> Svg a
+cannon ticks =
     let
+        ( boundsX, boundsY ) =
+            Bounds.game
+
         initialCircle =
             Model.initialCircle
 
@@ -99,33 +102,37 @@ cannonTransform angle rotationPointX rotationPointY =
 circleToSvg : String -> Circle -> Svg a
 circleToSvg fillColour circle =
     let
-        xCentre =
+        cetreX =
             toString circle.cx
 
-        yCentre =
+        centreY =
             toString circle.cy
 
         radius =
             toString circle.radius
     in
         Svg.circle
-            [ cx xCentre
-            , cy yCentre
+            [ cx cetreX
+            , cy centreY
             , r radius
             , fill fillColour
             ]
             []
 
 
-svgCannonMargin : Bounds -> Svg a
-svgCannonMargin ( safeBoundsX, safeBoundsY ) =
-    Svg.line
-        [ x1 "0"
-        , y1 (toString safeBoundsY)
-        , x2 (toString safeBoundsX)
-        , y2 (toString safeBoundsY)
-        , strokeDasharray "10, 5"
-        , strokeWidth "5"
-        , stroke "black"
-        ]
-        []
+svgCannonMargin : Svg a
+svgCannonMargin =
+    let
+        ( activeBoundsX, activeBoundsY ) =
+            Bounds.active
+    in
+        Svg.line
+            [ x1 "0"
+            , y1 (toString activeBoundsY)
+            , x2 (toString activeBoundsX)
+            , y2 (toString activeBoundsY)
+            , strokeDasharray "10, 5"
+            , strokeWidth "5"
+            , stroke "black"
+            ]
+            []
