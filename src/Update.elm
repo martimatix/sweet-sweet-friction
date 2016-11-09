@@ -7,6 +7,7 @@ import Circle.Growth as Growth exposing (State(..))
 import WallCollision as WC
 import Vector exposing (Vector)
 import Friction exposing (Result(..))
+import Bounds
 import CannonAngle
 
 
@@ -100,7 +101,7 @@ wallCollision : Model -> Model
 wallCollision ({ velocity, activeCircle } as model) =
     let
         nextVelocity =
-            WC.velocityAfterCollision velocity activeCircle
+            WC.velocityAfterCollision Bounds.game velocity activeCircle
     in
         { model | velocity = nextVelocity }
 

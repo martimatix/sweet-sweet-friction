@@ -3,6 +3,7 @@ module Circle.Growth exposing (grow, State(..))
 import Circle exposing (Circle)
 import Circle.Collision as CC
 import WallCollision as WC
+import Bounds
 
 
 type alias GrowthModel =
@@ -39,7 +40,7 @@ checkForWallCollision : GrowthModel -> GrowthModel
 checkForWallCollision ({ activeCircle } as model) =
     let
         wallCollision =
-            WC.collision activeCircle
+            WC.collision Bounds.active activeCircle
     in
         { model | collision = model.collision || wallCollision }
 

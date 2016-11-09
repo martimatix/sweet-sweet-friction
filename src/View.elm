@@ -125,14 +125,20 @@ svgCannonMargin =
     let
         ( activeBoundsX, activeBoundsY ) =
             Bounds.active
+
+        lineThickness =
+            4
+
+        marginHeight =
+            activeBoundsY + lineThickness // 2
     in
         Svg.line
             [ x1 "0"
-            , y1 (toString activeBoundsY)
+            , y1 (toString marginHeight)
             , x2 (toString activeBoundsX)
-            , y2 (toString activeBoundsY)
+            , y2 (toString marginHeight)
             , strokeDasharray "10, 5"
-            , strokeWidth "5"
+            , strokeWidth (toString lineThickness)
             , stroke "black"
             ]
             []

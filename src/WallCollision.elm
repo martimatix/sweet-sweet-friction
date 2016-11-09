@@ -5,42 +5,42 @@ import Vector exposing (Vector)
 import Bounds exposing (Bounds)
 
 
-velocityAfterCollision : Vector -> Circle -> Vector
-velocityAfterCollision velocity circle =
-    if collisionWithVerticalWall circle then
+velocityAfterCollision : Bounds -> Vector -> Circle -> Vector
+velocityAfterCollision bounds velocity circle =
+    if collisionWithVerticalWall bounds circle then
         velocityAfterVerticalWall velocity
-    else if collisionWithHorizontalWall circle then
+    else if collisionWithHorizontalWall bounds circle then
         velocityAfterHorizontalWall velocity
     else
         velocity
 
 
-collision : Circle -> Bool
-collision circle =
+collision : Bounds -> Circle -> Bool
+collision bounds circle =
     let
         vertical =
-            collisionWithVerticalWall circle
+            collisionWithVerticalWall bounds circle
 
         horizontal =
-            collisionWithHorizontalWall circle
+            collisionWithHorizontalWall bounds circle
     in
         vertical || horizontal
 
 
-collisionWithVerticalWall : Circle -> Bool
-collisionWithVerticalWall { cx, radius } =
+collisionWithVerticalWall : Bounds -> Circle -> Bool
+collisionWithVerticalWall bounds { cx, radius } =
     let
         ( boundaryX, _ ) =
-            Bounds.game
+            bounds
     in
         cx - radius <= 0 || cx + radius >= boundaryX
 
 
-collisionWithHorizontalWall : Circle -> Bool
-collisionWithHorizontalWall { cy, radius } =
+collisionWithHorizontalWall : Bounds -> Circle -> Bool
+collisionWithHorizontalWall bounds { cy, radius } =
     let
         ( _, boundaryY ) =
-            Bounds.game
+            bounds
     in
         cy - radius <= 0 || cy + radius >= boundaryY
 
