@@ -18,6 +18,7 @@ type State
     = Waiting
     | Travelling
     | Growing
+    | GameOver
 
 
 initial : Model

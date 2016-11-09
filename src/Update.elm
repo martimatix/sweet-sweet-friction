@@ -50,10 +50,14 @@ animate model =
                 |> wallCollision
                 |> advanceCircle
                 |> applyFriction
+                |> checkGameOver
 
         Growing ->
             model
                 |> growCircle
+
+        GameOver ->
+            model
 
 
 incrementTick : Model -> Model
@@ -147,6 +151,27 @@ growCircle ({ activeCircle, stationaryCircles } as model) =
 
         Growth.Active biggerActiveCircle ->
             { model | activeCircle = biggerActiveCircle }
+
+
+checkGameOver : Model -> Model
+checkGameOver ({ velocity, activeCircle } as model) =
+    let
+        ( velocityX, velocityY ) =
+            velocity
+
+        circleTravellingDownwards =
+            velocityY > 0
+
+        ( _, boundaryY ) =
+            Bounds.active
+
+        circleOutsideActiveBounds =
+            activeCircle.cy + activeCircle.radius > toFloat boundaryY
+    in
+        if circleTravellingDownwards && circleOutsideActiveBounds then
+            { model | state = GameOver }
+        else
+            model
 
 
 wrapReturnType : Model -> ( Model, Cmd a )
