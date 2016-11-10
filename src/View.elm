@@ -46,14 +46,14 @@ boundsToString ( x, y ) =
 cannon : Int -> Svg a
 cannon ticks =
     let
-        ( boundaryX, boundaryY ) =
+        ( boundsX, boundsY ) =
             Bounds.game
 
         initialCircle =
             Model.initialCircle
 
         cannonX =
-            boundaryX // 2 - cannonWidth // 2
+            boundsX // 2 - cannonWidth // 2
 
         cannonY =
             round initialCircle.cy - cannonHeight
@@ -68,7 +68,7 @@ cannon ticks =
             CannonAngle.ticksToSvgAngle ticks
 
         rotationPointX =
-            boundaryX // 2
+            boundsX // 2
 
         rotationPointY =
             cannonY + cannonHeight
@@ -123,19 +123,19 @@ circleToSvg fillColour circle =
 svgCannonMargin : Svg a
 svgCannonMargin =
     let
-        ( boundaryX, boundaryY ) =
+        ( boundsX, boundsY ) =
             Bounds.active
 
         lineThickness =
             4
 
         marginHeight =
-            boundaryY + lineThickness // 2
+            boundsY + lineThickness // 2
     in
         Svg.line
             [ x1 "0"
             , y1 (toString marginHeight)
-            , x2 (toString boundaryX)
+            , x2 (toString boundsX)
             , y2 (toString marginHeight)
             , strokeDasharray "10, 5"
             , strokeWidth (toString lineThickness)

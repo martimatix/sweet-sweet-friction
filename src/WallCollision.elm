@@ -30,19 +30,19 @@ collision bounds circle =
 collisionWithVerticalWall : Bounds -> Circle -> Bool
 collisionWithVerticalWall bounds { cx, radius } =
     let
-        ( boundaryX, _ ) =
+        ( boundsX, _ ) =
             bounds
     in
-        cx - radius <= 0 || cx + radius >= boundaryX
+        cx - radius <= 0 || cx + radius >= boundsX
 
 
 collisionWithHorizontalWall : Bounds -> Circle -> Bool
 collisionWithHorizontalWall bounds { cy, radius } =
     let
-        ( _, boundaryY ) =
+        ( _, boundsY ) =
             bounds
     in
-        cy - radius <= 0 || cy + radius >= boundaryY
+        cy - radius <= 0 || cy + radius >= boundsY
 
 
 velocityAfterVerticalWall : Vector -> Vector

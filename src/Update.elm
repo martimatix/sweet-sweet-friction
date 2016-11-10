@@ -162,11 +162,11 @@ checkGameOver ({ velocity, activeCircle } as model) =
         circleTravellingDownwards =
             velocityY > 0
 
-        ( _, boundaryY ) =
+        ( _, boundsY ) =
             Bounds.active
 
         circleOutsideActiveBounds =
-            activeCircle.cy + activeCircle.radius > toFloat boundaryY
+            activeCircle.cy + activeCircle.radius > toFloat boundsY
     in
         if circleTravellingDownwards && circleOutsideActiveBounds then
             { model | state = GameOver }
