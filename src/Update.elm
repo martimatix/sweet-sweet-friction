@@ -20,9 +20,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Tick newTime ->
-            model
-                |> animate
-                |> wrapReturnType
+            ( animate model, Cmd.none )
 
         FireCannon ->
             case model.state of
@@ -172,8 +170,3 @@ checkGameOver ({ velocity, activeCircle } as model) =
             { model | state = GameOver }
         else
             model
-
-
-wrapReturnType : Model -> ( Model, Cmd a )
-wrapReturnType model =
-    ( model, Cmd.none )
