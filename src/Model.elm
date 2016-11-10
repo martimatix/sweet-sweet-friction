@@ -24,14 +24,14 @@ type State
 initial : Model
 initial =
     Model []
-        initialCircle
+        (initialCircle 0)
         ( 0, 0 )
         0
         Waiting
 
 
-initialCircle : Circle
-initialCircle =
+initialCircle : Int -> Circle
+initialCircle rotation =
     let
         ( x, y ) =
             Bounds.game
@@ -47,4 +47,4 @@ initialCircle =
         distanceOfCannonFromFloor =
             20
     in
-        (Circle cx cy 15 3)
+        (Circle cx cy 15 3 rotation)

@@ -131,7 +131,7 @@ applyFriction model =
 
 
 growCircle : Model -> Model
-growCircle ({ activeCircle, stationaryCircles } as model) =
+growCircle ({ activeCircle, stationaryCircles, ticks } as model) =
     case Growth.grow activeCircle stationaryCircles of
         Growth.Stopped ->
             let
@@ -139,7 +139,7 @@ growCircle ({ activeCircle, stationaryCircles } as model) =
                     activeCircle :: stationaryCircles
 
                 nextActiveCircle =
-                    Model.initialCircle
+                    Model.initialCircle ticks
             in
                 { model
                     | state = Waiting

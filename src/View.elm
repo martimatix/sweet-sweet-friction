@@ -50,7 +50,7 @@ cannon ticks =
             Bounds.game
 
         initialCircle =
-            Model.initialCircle
+            Model.initialCircle 0
 
         cannonX =
             boundsX // 2 - cannonWidth // 2
@@ -68,10 +68,10 @@ cannon ticks =
             CannonAngle.ticksToSvgAngle ticks
 
         rotationPointX =
-            boundsX // 2
+            (toFloat boundsX) / 2
 
         rotationPointY =
-            cannonY + cannonHeight
+            toFloat (cannonY + cannonHeight)
     in
         Svg.rect
             [ x (toString cannonX)
@@ -79,13 +79,13 @@ cannon ticks =
             , width (toString cannonWidth)
             , height (toString cannonHeight)
             , fill "#000"
-            , transform (cannonTransform angle rotationPointX rotationPointY)
+            , transform (rotateTransform angle rotationPointX rotationPointY)
             ]
             []
 
 
-cannonTransform : Int -> Int -> Int -> String
-cannonTransform angle rotationPointX rotationPointY =
+rotateTransform : Float -> Float -> Float -> String
+rotateTransform angle rotationPointX rotationPointY =
     let
         angleString =
             toString angle
@@ -100,24 +100,26 @@ cannonTransform angle rotationPointX rotationPointY =
 
 
 circleToSvg : String -> Circle -> Svg a
-circleToSvg fillColour circle =
-    let
-        cetreX =
-            toString circle.cx
-
-        centreY =
-            toString circle.cy
-
-        radius =
-            toString circle.radius
-    in
-        Svg.circle
-            [ cx cetreX
-            , cy centreY
-            , r radius
+circleToSvg fillColour { cx, cy, radius, hitPoints, rotation } =
+    g []
+        [ Svg.circle
+            [ Svg.Attributes.cx (toString cx)
+            , Svg.Attributes.cy (toString cy)
+            , r (toString radius)
             , fill fillColour
             ]
             []
+        , Svg.text'
+            [ x (toString cx)
+            , y (toString cy)
+            , fontFamily "Haettenschweiler"
+            , fontSize (toString (radius * 1.8))
+            , textAnchor "middle"
+            , dominantBaseline "central"
+            , transform (rotateTransform (toFloat rotation) cx cy)
+            ]
+            [ text (toString hitPoints) ]
+        ]
 
 
 svgCannonMargin : Svg a

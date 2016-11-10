@@ -1,9 +1,9 @@
 module CannonAngle exposing (..)
 
 
-ticksToSvgAngle : Int -> Int
+ticksToSvgAngle : Int -> Float
 ticksToSvgAngle ticks =
-    90 - ticksToAngle ticks
+    toFloat (90 - ticksToAngle ticks)
 
 
 ticksToAngle : Int -> Int

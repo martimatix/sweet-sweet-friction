@@ -8,6 +8,7 @@ type alias Circle =
     , cy : Float
     , radius : Float
     , hitPoints : Int
+    , rotation : Int
     }
 
 
