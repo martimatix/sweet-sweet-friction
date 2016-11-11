@@ -15,10 +15,10 @@ view : Model -> Html Msg
 view { activeCircle, stationaryCircles, ticks } =
     let
         svgActiveCircle =
-            circleToSvg "#18a19a" activeCircle
+            circleToSvg activeCircle
 
         svgStationaryCircles =
-            List.map (circleToSvg "#0B79CE") stationaryCircles
+            List.map circleToSvg stationaryCircles
 
         svgCircles =
             svgActiveCircle :: svgStationaryCircles
@@ -30,7 +30,7 @@ view { activeCircle, stationaryCircles, ticks } =
             [ viewBox (boundsToString Bounds.game)
             , onClick FireCannon
             , height "600px"
-            , Svg.Attributes.style "background: yellow"
+            , Svg.Attributes.style "background: black"
             ]
             [ g [] svgCircles
             , svgCannon
@@ -78,7 +78,7 @@ cannon ticks =
             , y (toString cannonY)
             , width (toString cannonWidth)
             , height (toString cannonHeight)
-            , fill "#000"
+            , fill "white"
             , transform (rotateTransform angle rotationPointX rotationPointY)
             ]
             []
@@ -99,19 +99,19 @@ rotateTransform angle rotationPointX rotationPointY =
         "rotate(" ++ angleString ++ " " ++ x ++ " " ++ y ++ ")"
 
 
-circleToSvg : String -> Circle -> Svg a
-circleToSvg fillColour { cx, cy, radius, hitPoints, rotation } =
+circleToSvg : Circle -> Svg a
+circleToSvg { cx, cy, radius, hitPoints, rotation } =
     g []
         [ Svg.circle
             [ Svg.Attributes.cx (toString cx)
             , Svg.Attributes.cy (toString cy)
             , r (toString radius)
-            , fill fillColour
+            , fill "white"
             ]
             []
         , Svg.text'
             [ x (toString cx)
-            , y (toString cy)
+            , y (toString (cy - radius * 0.05))
             , fontFamily "Haettenschweiler"
             , fontSize (toString (radius * 1.8))
             , textAnchor "middle"
@@ -141,6 +141,6 @@ svgCannonMargin =
             , y2 (toString marginHeight)
             , strokeDasharray "10, 5"
             , strokeWidth (toString lineThickness)
-            , stroke "black"
+            , stroke "white"
             ]
             []
