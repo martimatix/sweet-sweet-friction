@@ -59,10 +59,10 @@ cannon ticks =
             round initialCircle.cy - cannonHeight
 
         cannonWidth =
-            50
+            36
 
         cannonHeight =
-            100
+            85
 
         angle =
             CannonAngle.ticksToSvgAngle ticks
@@ -129,7 +129,7 @@ svgCannonMargin =
             Bounds.active
 
         lineThickness =
-            4
+            2
 
         marginHeight =
             boundsY + lineThickness // 2

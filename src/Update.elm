@@ -72,7 +72,7 @@ initialVelocity ticks =
                 |> toFloat
 
         velocityMagnitude =
-            3
+            8
     in
         ( velocityMagnitude * cos (angle |> degrees)
         , velocityMagnitude * sin (angle |> degrees) |> negate
@@ -139,7 +139,7 @@ growCircle ({ activeCircle, stationaryCircles, ticks } as model) =
                     activeCircle :: stationaryCircles
 
                 nextActiveCircle =
-                    Model.initialCircle ticks
+                    Model.initialCircle (ticks % 30 - 15)
             in
                 { model
                     | state = Waiting

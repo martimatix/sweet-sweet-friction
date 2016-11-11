@@ -8,22 +8,14 @@ type Result
     | CausesStop
 
 
-frictionMagnitude : Float
-frictionMagnitude =
-    0.007
+frictionCoefficient : Float
+frictionCoefficient =
+    0.9895
 
 
 apply : Vector -> Result
 apply velocity =
-    if Vector.magnitude velocity > frictionMagnitude then
-        SlowsDownCircle (Vector.add velocity (frictionVector velocity))
+    if Vector.magnitude velocity > 0.08 then
+        SlowsDownCircle (Vector.scale frictionCoefficient velocity)
     else
         CausesStop
-
-
-frictionVector : Vector -> Vector
-frictionVector velocity =
-    velocity
-        |> Vector.normalise
-        |> Vector.negate
-        |> Vector.scale frictionMagnitude

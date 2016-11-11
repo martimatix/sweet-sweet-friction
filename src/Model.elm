@@ -24,7 +24,7 @@ type State
 initial : Model
 initial =
     Model []
-        (initialCircle 0)
+        (initialCircle 5)
         ( 0, 0 )
         0
         Waiting

@@ -17,6 +17,6 @@ active =
             game
 
         cannonMargin =
-            150
+            110
     in
         ( x, y - cannonMargin )
