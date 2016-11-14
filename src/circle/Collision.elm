@@ -42,7 +42,7 @@ collision : Circle -> Circle -> Bool
 collision circle1 circle2 =
     let
         distanceBetweenCircleCentres =
-            Vector.magnitude <| vectorBetweenCircleCentres circle1 circle2
+            Vector.magnitude <| Circle.vectorBetweenCentres circle1 circle2
 
         tolerance =
             0.1
@@ -69,9 +69,4 @@ velocityAfterCollision stationaryCircle activeCircle velocity =
 
 unitMirrorVector : Circle -> Circle -> Vector
 unitMirrorVector stationaryCircle activeCircle =
-    Vector.normalise <| vectorBetweenCircleCentres stationaryCircle activeCircle
-
-
-vectorBetweenCircleCentres : Circle -> Circle -> Vector
-vectorBetweenCircleCentres circle1 circle2 =
-    ( circle2.cx - circle1.cx, circle2.cy - circle1.cy )
+    Vector.normalise <| Circle.vectorBetweenCentres stationaryCircle activeCircle

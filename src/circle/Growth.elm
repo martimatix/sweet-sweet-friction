@@ -3,7 +3,8 @@ module Circle.Growth exposing (grow, State(..))
 import Circle exposing (Circle)
 import Circle.Collision as CC
 import WallCollision as WC
-import Bounds
+import Bounds exposing (Bounds)
+import Vector
 
 
 type alias GrowthModel =
@@ -16,6 +17,32 @@ type alias GrowthModel =
 type State
     = Active Circle
     | Stopped
+
+
+grownCircleRadius : Circle -> List Circle -> Bounds -> Maybe Float
+grownCircleRadius activeCircle stationaryCircles ( boundsX, boundsY ) =
+    let
+        distanceToCircleEdges =
+            List.map (distanceToCircleEdge activeCircle) stationaryCircles
+
+        distanceToWalls =
+            [ activeCircle.cx
+            , activeCircle.cy
+            , (toFloat boundsX) - activeCircle.cx
+            , (toFloat boundsY) - activeCircle.cy
+            ]
+    in
+        List.maximum (distanceToCircleEdges ++ distanceToWalls)
+
+
+distanceToCircleEdge : Circle -> Circle -> Float
+distanceToCircleEdge activeCircle stationaryCircle =
+    let
+        distanceBetweenCircles =
+            Circle.vectorBetweenCentres activeCircle stationaryCircle
+                |> Vector.magnitude
+    in
+        distanceBetweenCircles - activeCircle.radius
 
 
 grow : Circle -> List Circle -> State
