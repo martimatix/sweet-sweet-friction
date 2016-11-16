@@ -1,27 +1,16 @@
-module Circle.Growth exposing (grow, State(..))
+module Circle.Growth exposing (targetRadius, nextCircle)
 
+import Model
 import Circle exposing (Circle)
-import Circle.Collision as CC
-import WallCollision as WC
 import Bounds exposing (Bounds)
-import Vector
 
 
-type alias GrowthModel =
-    { collision : Bool
-    , activeCircle : Circle
-    , stationaryCircles : List Circle
-    }
-
-
-type State
-    = Active Circle
-    | Stopped
-
-
-grownCircleRadius : Circle -> List Circle -> Bounds -> Maybe Float
-grownCircleRadius activeCircle stationaryCircles ( boundsX, boundsY ) =
+targetRadius : Circle -> List Circle -> Float
+targetRadius activeCircle stationaryCircles =
     let
+        ( boundsX, boundsY ) =
+            Bounds.active
+
         distanceToCircleEdges =
             List.map (distanceToCircleEdge activeCircle) stationaryCircles
 
@@ -32,49 +21,26 @@ grownCircleRadius activeCircle stationaryCircles ( boundsX, boundsY ) =
             , (toFloat boundsY) - activeCircle.cy
             ]
     in
-        List.maximum (distanceToCircleEdges ++ distanceToWalls)
+        List.minimum (distanceToCircleEdges ++ distanceToWalls)
+            |> Maybe.withDefault Model.initialRadius
 
 
 distanceToCircleEdge : Circle -> Circle -> Float
 distanceToCircleEdge activeCircle stationaryCircle =
     let
         distanceBetweenCircles =
-            Circle.vectorBetweenCentres activeCircle stationaryCircle
-                |> Vector.magnitude
+            Circle.distanceBetweenCentres activeCircle stationaryCircle
     in
-        distanceBetweenCircles - activeCircle.radius
+        distanceBetweenCircles - stationaryCircle.radius
 
 
-grow : Circle -> List Circle -> State
-grow activeCircle stationaryCircles =
-    growthModel activeCircle stationaryCircles
-        |> checkForCircularCollision
-        |> checkForWallCollision
-        |> applyGrowth
-
-
-growthModel : Circle -> List Circle -> GrowthModel
-growthModel =
-    GrowthModel False
-
-
-checkForCircularCollision : GrowthModel -> GrowthModel
-checkForCircularCollision ({ activeCircle, stationaryCircles } as model) =
-    { model | collision = CC.anyCollisions activeCircle stationaryCircles }
-
-
-checkForWallCollision : GrowthModel -> GrowthModel
-checkForWallCollision ({ activeCircle } as model) =
+nextCircle : Float -> Circle -> Circle
+nextCircle radiusTarget activeCircle =
     let
-        wallCollision =
-            WC.collision Bounds.active activeCircle
+        ticksToGrowFullSize =
+            50
+
+        increment =
+            (radiusTarget - Model.initialRadius) / ticksToGrowFullSize
     in
-        { model | collision = model.collision || wallCollision }
-
-
-applyGrowth : GrowthModel -> State
-applyGrowth { collision, activeCircle } =
-    if collision then
-        Stopped
-    else
-        Active { activeCircle | radius = activeCircle.radius + 0.5 }
+        { activeCircle | radius = activeCircle.radius + increment }

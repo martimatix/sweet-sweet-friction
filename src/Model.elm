@@ -17,7 +17,7 @@ type alias Model =
 type State
     = Waiting
     | Travelling
-    | Growing
+    | Growing Float
     | GameOver
 
 
@@ -47,4 +47,9 @@ initialCircle rotation =
         distanceOfCannonFromFloor =
             20
     in
-        (Circle cx cy 15 3 rotation)
+        (Circle cx cy initialRadius 3 rotation)
+
+
+initialRadius : Float
+initialRadius =
+    15

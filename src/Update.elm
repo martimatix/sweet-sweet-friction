@@ -3,7 +3,7 @@ module Update exposing (update, Msg(..))
 import Model exposing (..)
 import Circle exposing (Circle)
 import Circle.Collision as CC
-import Circle.Growth as Growth exposing (State(..))
+import Circle.Growth as Growth
 import WallCollision as WC
 import Vector exposing (Vector)
 import Friction exposing (Result(..))
@@ -50,9 +50,8 @@ animate model =
                 |> applyFriction
                 |> checkGameOver
 
-        Growing ->
-            model
-                |> growCircle
+        Growing targetRadius ->
+            growCircle targetRadius model
 
         GameOver ->
             model
@@ -118,7 +117,7 @@ advanceCircle model =
 
 
 applyFriction : Model -> Model
-applyFriction model =
+applyFriction ({ activeCircle, stationaryCircles } as model) =
     case Friction.apply model.velocity of
         Friction.SlowsDownCircle nextVelocity ->
             { model | velocity = nextVelocity }
@@ -126,29 +125,20 @@ applyFriction model =
         Friction.CausesStop ->
             { model
                 | velocity = ( 0, 0 )
-                , state = Growing
+                , state = Growing (Growth.targetRadius activeCircle stationaryCircles)
             }
 
 
-growCircle : Model -> Model
-growCircle ({ activeCircle, stationaryCircles, ticks } as model) =
-    case Growth.grow activeCircle stationaryCircles of
-        Growth.Stopped ->
-            let
-                nextStationaryCircles =
-                    activeCircle :: stationaryCircles
-
-                nextActiveCircle =
-                    Model.initialCircle (ticks % 30 - 15)
-            in
-                { model
-                    | state = Waiting
-                    , activeCircle = nextActiveCircle
-                    , stationaryCircles = nextStationaryCircles
-                }
-
-        Growth.Active biggerActiveCircle ->
-            { model | activeCircle = biggerActiveCircle }
+growCircle : Float -> Model -> Model
+growCircle targetRadius ({ activeCircle, stationaryCircles, ticks } as model) =
+    if activeCircle.radius >= targetRadius then
+        { model
+            | state = Waiting
+            , activeCircle = Model.initialCircle (ticks % 30 - 15)
+            , stationaryCircles = activeCircle :: stationaryCircles
+        }
+    else
+        { model | activeCircle = Growth.nextCircle targetRadius activeCircle }
 
 
 checkGameOver : Model -> Model
