@@ -1,8 +1,17 @@
-module Circle.Growth exposing (targetRadius, nextCircle)
+module Circle.Growth exposing (growthIncrement, ticksToFullSize)
 
 import Model
 import Circle exposing (Circle)
 import Bounds exposing (Bounds)
+
+
+growthIncrement : Circle -> List Circle -> Float
+growthIncrement activeCircle stationaryCircles =
+    let
+        distanceToGrow =
+            targetRadius activeCircle stationaryCircles - Model.initialRadius
+    in
+        distanceToGrow / toFloat ticksToFullSize
 
 
 targetRadius : Circle -> List Circle -> Float
@@ -34,13 +43,6 @@ distanceToCircleEdge activeCircle stationaryCircle =
         distanceBetweenCircles - stationaryCircle.radius
 
 
-nextCircle : Float -> Circle -> Circle
-nextCircle radiusTarget activeCircle =
-    let
-        ticksToGrowFullSize =
-            50
-
-        increment =
-            (radiusTarget - Model.initialRadius) / ticksToGrowFullSize
-    in
-        { activeCircle | radius = activeCircle.radius + increment }
+ticksToFullSize : Int
+ticksToFullSize =
+    50

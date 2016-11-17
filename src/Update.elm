@@ -50,8 +50,8 @@ animate model =
                 |> applyFriction
                 |> checkGameOver
 
-        Growing targetRadius ->
-            growCircle targetRadius model
+        Growing growthIncrement growTicks ->
+            growCircle growthIncrement growTicks model
 
         GameOver ->
             model
@@ -123,26 +123,40 @@ applyFriction ({ activeCircle, stationaryCircles } as model) =
             { model | velocity = nextVelocity }
 
         Friction.CausesStop ->
+            let
+                growthIncrement =
+                    Growth.growthIncrement activeCircle stationaryCircles
+
+                growthTicks =
+                    Growth.ticksToFullSize
+            in
+                { model
+                    | velocity = ( 0, 0 )
+                    , state = Growing growthIncrement growthTicks
+                }
+
+
+growCircle : Float -> Int -> Model -> Model
+growCircle growthIncrement growTicks ({ activeCircle, stationaryCircles, ticks } as model) =
+    if growTicks == 0 then
+        let
+            randomRotation =
+                ticks % 30 - 15
+        in
             { model
-                | velocity = ( 0, 0 )
-                , state = Growing (Growth.targetRadius activeCircle stationaryCircles)
+                | state = Waiting
+                , activeCircle = Model.initialCircle randomRotation
+                , stationaryCircles = activeCircle :: stationaryCircles
             }
-
-
-growCircle : Float -> Model -> Model
-growCircle targetRadius ({ activeCircle, stationaryCircles, ticks } as model) =
-    if model.growTicks == 50 then
-        { model
-            | state = Waiting
-            , activeCircle = Model.initialCircle (ticks % 30 - 15)
-            , stationaryCircles = activeCircle :: stationaryCircles
-            , growTicks = 0
-        }
     else
-        { model
-            | activeCircle = Growth.nextCircle targetRadius activeCircle
-            , growTicks = model.growTicks + 1
-        }
+        let
+            nextCircle =
+                { activeCircle | radius = activeCircle.radius + growthIncrement }
+        in
+            { model
+                | activeCircle = nextCircle
+                , state = Growing growthIncrement (growTicks - 1)
+            }
 
 
 checkGameOver : Model -> Model
