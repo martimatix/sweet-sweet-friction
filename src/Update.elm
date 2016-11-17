@@ -131,14 +131,18 @@ applyFriction ({ activeCircle, stationaryCircles } as model) =
 
 growCircle : Float -> Model -> Model
 growCircle targetRadius ({ activeCircle, stationaryCircles, ticks } as model) =
-    if activeCircle.radius >= targetRadius then
+    if model.growTicks == 50 then
         { model
             | state = Waiting
             , activeCircle = Model.initialCircle (ticks % 30 - 15)
             , stationaryCircles = activeCircle :: stationaryCircles
+            , growTicks = 0
         }
     else
-        { model | activeCircle = Growth.nextCircle targetRadius activeCircle }
+        { model
+            | activeCircle = Growth.nextCircle targetRadius activeCircle
+            , growTicks = model.growTicks + 1
+        }
 
 
 checkGameOver : Model -> Model

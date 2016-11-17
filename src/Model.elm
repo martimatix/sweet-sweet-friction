@@ -11,6 +11,7 @@ type alias Model =
     , velocity : Vector
     , ticks : Int
     , state : State
+    , growTicks : Int
     }
 
 
@@ -28,6 +29,7 @@ initial =
         ( 0, 0 )
         0
         Waiting
+        0
 
 
 initialCircle : Int -> Circle
