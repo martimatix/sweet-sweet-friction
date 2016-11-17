@@ -3,13 +3,13 @@ module Main exposing (..)
 import Model exposing (Model)
 import Update exposing (update, Msg(..))
 import View exposing (view)
-import Html.App as App
+import Html exposing (Html)
 import AnimationFrame
 
 
-main : Program Never
+main : Program Never Model Msg
 main =
-    App.program
+    Html.program
         { init = ( Model.initial, Cmd.none )
         , view = view
         , update = update

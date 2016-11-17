@@ -33,7 +33,7 @@ collisionWithVerticalWall bounds { cx, radius } =
         ( boundsX, _ ) =
             bounds
     in
-        cx - radius <= 0 || cx + radius >= boundsX
+        cx - radius <= 0 || cx + radius >= (toFloat boundsX)
 
 
 collisionWithHorizontalWall : Bounds -> Circle -> Bool
@@ -42,7 +42,7 @@ collisionWithHorizontalWall bounds { cy, radius } =
         ( _, boundsY ) =
             bounds
     in
-        cy - radius <= 0 || cy + radius >= boundsY
+        cy - radius <= 0 || cy + radius >= (toFloat boundsY)
 
 
 velocityAfterVerticalWall : Vector -> Vector

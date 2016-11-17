@@ -109,7 +109,7 @@ circleToSvg { cx, cy, radius, hitPoints, rotation } =
             , fill "white"
             ]
             []
-        , Svg.text'
+        , Svg.text_
             [ x (toString cx)
             , y (toString (cy - radius * 0.05))
             , fontFamily "Haettenschweiler"
