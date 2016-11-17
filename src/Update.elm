@@ -136,27 +136,37 @@ applyFriction ({ activeCircle, stationaryCircles } as model) =
                 }
 
 
+initializeNextTurn : Model -> Model
+initializeNextTurn ({ activeCircle, stationaryCircles, ticks } as model) =
+    let
+        randomRotation =
+            ticks % 30 - 15
+    in
+        { model
+            | state = Waiting
+            , activeCircle = Model.initialCircle randomRotation
+            , stationaryCircles = activeCircle :: stationaryCircles
+        }
+
+
+increaseActiveCircleRadius : Float -> Int -> Model -> Model
+increaseActiveCircleRadius growthIncrement growTicks ({ activeCircle } as model) =
+    let
+        nextCircle =
+            { activeCircle | radius = activeCircle.radius + growthIncrement }
+    in
+        { model
+            | activeCircle = nextCircle
+            , state = Growing growthIncrement (growTicks - 1)
+        }
+
+
 growCircle : Float -> Int -> Model -> Model
-growCircle growthIncrement growTicks ({ activeCircle, stationaryCircles, ticks } as model) =
+growCircle growthIncrement growTicks model =
     if growTicks == 0 then
-        let
-            randomRotation =
-                ticks % 30 - 15
-        in
-            { model
-                | state = Waiting
-                , activeCircle = Model.initialCircle randomRotation
-                , stationaryCircles = activeCircle :: stationaryCircles
-            }
+        initializeNextTurn model
     else
-        let
-            nextCircle =
-                { activeCircle | radius = activeCircle.radius + growthIncrement }
-        in
-            { model
-                | activeCircle = nextCircle
-                , state = Growing growthIncrement (growTicks - 1)
-            }
+        increaseActiveCircleRadius growthIncrement growTicks model
 
 
 checkGameOver : Model -> Model
