@@ -3,11 +3,13 @@ module Model exposing (..)
 import Circle exposing (Circle)
 import Vector exposing (Vector)
 import Bounds exposing (Bounds)
+import RadialBurst exposing (RadialBurst)
 
 
 type alias Model =
     { stationaryCircles : List Circle
     , activeCircle : Circle
+    , radialBursts : List RadialBurst
     , velocity : Vector
     , ticks : Int
     , state : State
@@ -25,6 +27,7 @@ initial : Model
 initial =
     Model []
         (initialCircle 5)
+        []
         ( 0, 0 )
         0
         Waiting

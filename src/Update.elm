@@ -9,6 +9,7 @@ import Vector exposing (Vector)
 import Friction exposing (Result(..))
 import Bounds
 import CannonAngle
+import RadialBurst
 
 
 type Msg
@@ -19,7 +20,7 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Tick newTime ->
+        Tick _ ->
             ( animate model, Cmd.none )
 
         FireCannon ->
@@ -37,6 +38,13 @@ update msg model =
 
 animate : Model -> Model
 animate model =
+    model
+        |> radialBurst
+        |> animateState
+
+
+animateState : Model -> Model
+animateState model =
     case model.state of
         Waiting ->
             model
@@ -87,14 +95,18 @@ circularCollision ({ activeCircle, stationaryCircles, velocity } as model) =
         nextVelocity =
             CC.nextVelocity velocity activeCircle collidingCircles
 
-        damagedCollidingCircles =
+        ( damagedCollidingCircles, deadCircles ) =
             collidingCircles
                 |> List.map CC.applyDamage
-                |> List.filter (\circle -> circle.hitPoints > 0)
+                |> List.partition (\circle -> circle.hitPoints > 0)
+
+        newRadialBursts =
+            List.map RadialBurst.create deadCircles
     in
         { model
             | velocity = nextVelocity
             , stationaryCircles = damagedCollidingCircles ++ otherCircles
+            , radialBursts = newRadialBursts ++ model.radialBursts
         }
 
 
@@ -188,3 +200,14 @@ checkGameOver ({ velocity, activeCircle } as model) =
             { model | state = GameOver }
         else
             model
+
+
+radialBurst : Model -> Model
+radialBurst ({ radialBursts } as model) =
+    let
+        nextRadialBursts =
+            radialBursts
+                |> List.map RadialBurst.advance
+                |> List.filter RadialBurst.visible
+    in
+        { model | radialBursts = nextRadialBursts }

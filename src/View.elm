@@ -9,10 +9,11 @@ import Update exposing (Msg(FireCannon))
 import Bounds exposing (Bounds)
 import CannonAngle
 import Circle exposing (Circle)
+import RadialBurst exposing (RadialBurst)
 
 
 view : Model -> Html Msg
-view { activeCircle, stationaryCircles, ticks } =
+view { activeCircle, stationaryCircles, ticks, radialBursts } =
     let
         svgActiveCircle =
             circleToSvg activeCircle
@@ -25,6 +26,9 @@ view { activeCircle, stationaryCircles, ticks } =
 
         svgCannon =
             cannon ticks
+
+        svgRadialBursts =
+            List.map svgRadialBurst radialBursts
     in
         svg
             [ viewBox (boundsToString Bounds.game)
@@ -33,6 +37,7 @@ view { activeCircle, stationaryCircles, ticks } =
             , Svg.Attributes.style "background: black"
             ]
             [ g [] svgCircles
+            , g [] svgRadialBursts
             , svgCannon
             , svgCannonMargin
             ]
@@ -144,3 +149,16 @@ svgCannonMargin =
             , stroke "white"
             ]
             []
+
+
+svgRadialBurst : RadialBurst -> Svg a
+svgRadialBurst { cx, cy, radius, strokeWidth } =
+    Svg.circle
+        [ Svg.Attributes.cx (toString cx)
+        , Svg.Attributes.cy (toString cy)
+        , Svg.Attributes.strokeWidth (toString strokeWidth)
+        , stroke "white"
+        , r (toString radius)
+        , fill "none"
+        ]
+        []
