@@ -13,6 +13,7 @@ type alias Model =
     , velocity : Vector
     , ticks : Int
     , state : State
+    , score : Int
     }
 
 
@@ -25,12 +26,14 @@ type State
 
 initial : Model
 initial =
-    Model []
-        (initialCircle 5)
-        []
-        ( 0, 0 )
-        0
-        Waiting
+    { stationaryCircles = []
+    , activeCircle = (initialCircle 5)
+    , radialBursts = []
+    , velocity = ( 0, 0 )
+    , ticks = 0
+    , state = Waiting
+    , score = 0
+    }
 
 
 initialCircle : Int -> Circle

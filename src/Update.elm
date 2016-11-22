@@ -107,6 +107,7 @@ circularCollision ({ activeCircle, stationaryCircles, velocity } as model) =
             | velocity = nextVelocity
             , stationaryCircles = damagedCollidingCircles ++ otherCircles
             , radialBursts = newRadialBursts ++ model.radialBursts
+            , score = List.length deadCircles + model.score
         }
 
 
