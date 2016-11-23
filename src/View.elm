@@ -4,8 +4,8 @@ import Svg exposing (Svg, svg)
 import Svg.Attributes exposing (..)
 import Html exposing (Html)
 import Html.Events exposing (onClick)
-import Model exposing (Model)
-import Update exposing (Msg(FireCannon))
+import Model exposing (Model, State(..))
+import Update exposing (Msg(..))
 import Bounds exposing (Bounds)
 import CannonAngle
 import Circle exposing (Circle)
@@ -13,7 +13,7 @@ import RadialBurst exposing (RadialBurst)
 
 
 view : Model -> Html Msg
-view { activeCircle, stationaryCircles, ticks, radialBursts, score } =
+view { activeCircle, stationaryCircles, ticks, radialBursts, score, state } =
     let
         svgActiveCircle =
             circleToSvg activeCircle
@@ -32,7 +32,7 @@ view { activeCircle, stationaryCircles, ticks, radialBursts, score } =
     in
         svg
             [ viewBox (boundsToString Bounds.game)
-            , onClick FireCannon
+            , onClick (clickEvent state)
             , height "600px"
             , Svg.Attributes.style "background: black"
             ]
@@ -42,6 +42,19 @@ view { activeCircle, stationaryCircles, ticks, radialBursts, score } =
             , svgCannon
             , svgScore score
             ]
+
+
+clickEvent : State -> Msg
+clickEvent state =
+    case state of
+        Waiting ->
+            FireCannon
+
+        GameOver ->
+            NewGame
+
+        _ ->
+            NoOp
 
 
 boundsToString : Bounds -> String

@@ -15,6 +15,8 @@ import RadialBurst
 type Msg
     = Tick Float
     | FireCannon
+    | NewGame
+    | NoOp
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -24,16 +26,17 @@ update msg model =
             ( animate model, Cmd.none )
 
         FireCannon ->
-            case model.state of
-                Waiting ->
-                    { model
-                        | state = Travelling
-                        , velocity = initialVelocity model.ticks
-                    }
-                        ! []
+            { model
+                | state = Travelling
+                , velocity = initialVelocity model.ticks
+            }
+                ! []
 
-                _ ->
-                    model ! []
+        NewGame ->
+            Model.initial ! []
+
+        NoOp ->
+            model ! []
 
 
 animate : Model -> Model
