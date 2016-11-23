@@ -105,12 +105,16 @@ circularCollision ({ activeCircle, stationaryCircles, velocity } as model) =
 
         newRadialBursts =
             List.map RadialBurst.create deadCircles
+
+        nextScore =
+            List.length deadCircles + model.score
     in
         { model
             | velocity = nextVelocity
             , stationaryCircles = damagedCollidingCircles ++ otherCircles
             , radialBursts = newRadialBursts ++ model.radialBursts
-            , score = List.length deadCircles + model.score
+            , score = nextScore
+            , highScore = max nextScore model.highScore
         }
 
 

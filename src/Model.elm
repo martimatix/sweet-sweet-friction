@@ -14,6 +14,7 @@ type alias Model =
     , ticks : Int
     , state : State
     , score : Int
+    , highScore : Int
     }
 
 
@@ -33,6 +34,7 @@ initial =
     , ticks = 0
     , state = Waiting
     , score = 0
+    , highScore = 0
     }
 
 
