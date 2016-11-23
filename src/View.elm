@@ -1,6 +1,6 @@
 module View exposing (view)
 
-import Svg exposing (..)
+import Svg exposing (Svg, svg)
 import Svg.Attributes exposing (..)
 import Html exposing (Html)
 import Html.Events exposing (onClick)
@@ -13,7 +13,7 @@ import RadialBurst exposing (RadialBurst)
 
 
 view : Model -> Html Msg
-view { activeCircle, stationaryCircles, ticks, radialBursts } =
+view { activeCircle, stationaryCircles, ticks, radialBursts, score } =
     let
         svgActiveCircle =
             circleToSvg activeCircle
@@ -36,10 +36,11 @@ view { activeCircle, stationaryCircles, ticks, radialBursts } =
             , height "600px"
             , Svg.Attributes.style "background: black"
             ]
-            [ g [] svgCircles
-            , g [] svgRadialBursts
+            [ svgCannonMargin
+            , Svg.g [] svgCircles
+            , Svg.g [] svgRadialBursts
             , svgCannon
-            , svgCannonMargin
+            , svgScore score
             ]
 
 
@@ -106,7 +107,7 @@ rotateTransform angle rotationPointX rotationPointY =
 
 circleToSvg : Circle -> Svg a
 circleToSvg { cx, cy, radius, hitPoints, rotation } =
-    g []
+    Svg.g []
         [ Svg.circle
             [ Svg.Attributes.cx (toString cx)
             , Svg.Attributes.cy (toString cy)
@@ -123,7 +124,7 @@ circleToSvg { cx, cy, radius, hitPoints, rotation } =
             , dominantBaseline "central"
             , transform (rotateTransform (toFloat rotation) cx cy)
             ]
-            [ text (toString hitPoints) ]
+            [ Svg.text (toString hitPoints) ]
         ]
 
 
@@ -162,3 +163,22 @@ svgRadialBurst { cx, cy, radius, strokeWidth } =
         , fill "none"
         ]
         []
+
+
+svgScore : Int -> Svg a
+svgScore score =
+    let
+        ( _, boundsY ) =
+            Bounds.game
+
+        scoreText =
+            "Score: " ++ (toString score)
+    in
+        Svg.text_
+            [ x (toString 10)
+            , y (toString (boundsY - 10))
+            , fontFamily "Haettenschweiler"
+            , fontSize "40"
+            , fill "white"
+            ]
+            [ Svg.text scoreText ]
