@@ -13,7 +13,7 @@ import RadialBurst exposing (RadialBurst)
 
 
 view : Model -> Html Msg
-view { activeCircle, stationaryCircles, ticks, radialBursts, score, state } =
+view { activeCircle, stationaryCircles, ticks, radialBursts, score, highScore, state } =
     let
         svgActiveCircle =
             circleToSvg activeCircle
@@ -29,6 +29,12 @@ view { activeCircle, stationaryCircles, ticks, radialBursts, score, state } =
 
         svgRadialBursts =
             List.map svgRadialBurst radialBursts
+
+        (( scoreX, scoreY ) as scorePosition) =
+            ( 10, 10 )
+
+        highScorePosition =
+            ( (Tuple.first Bounds.active) - scoreX, scoreY )
     in
         svg
             [ viewBox (boundsToString Bounds.game)
@@ -40,7 +46,8 @@ view { activeCircle, stationaryCircles, ticks, radialBursts, score, state } =
             , Svg.g [] svgCircles
             , Svg.g [] svgRadialBursts
             , svgCannon
-            , svgScore score
+            , svgScore score scorePosition "Score" "start"
+            , svgScore highScore highScorePosition "Hi-Score" "end"
             ]
 
 
@@ -178,20 +185,21 @@ svgRadialBurst { cx, cy, radius, strokeWidth } =
         []
 
 
-svgScore : Int -> Svg a
-svgScore score =
+svgScore : Int -> ( Int, Int ) -> String -> String -> Svg a
+svgScore score ( positionX, positionY ) scoreLabel anchor =
     let
         ( _, boundsY ) =
             Bounds.game
 
         scoreText =
-            "Score: " ++ (toString score)
+            scoreLabel ++ ": " ++ (toString score)
     in
         Svg.text_
-            [ x (toString 10)
-            , y (toString (boundsY - 10))
+            [ x (toString positionX)
+            , y (toString (boundsY - positionY))
             , fontFamily "Haettenschweiler"
-            , fontSize "40"
+            , fontSize "30"
             , fill "white"
+            , textAnchor anchor
             ]
             [ Svg.text scoreText ]
