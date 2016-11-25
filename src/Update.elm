@@ -160,8 +160,8 @@ applyFriction ({ activeCircle, stationaryCircles } as model) =
                 }
 
 
-initializeNextTurn : Model -> Model
-initializeNextTurn ({ activeCircle, stationaryCircles, ticks } as model) =
+initialiseNextTurn : Model -> Model
+initialiseNextTurn ({ activeCircle, stationaryCircles, ticks } as model) =
     let
         randomRotation =
             ticks % 30 - 15
@@ -188,7 +188,7 @@ increaseActiveCircleRadius growthIncrement growTicks ({ activeCircle } as model)
 growCircle : Float -> Int -> Model -> Model
 growCircle growthIncrement growTicks model =
     if growTicks == 0 then
-        initializeNextTurn model
+        initialiseNextTurn model
     else
         increaseActiveCircleRadius growthIncrement growTicks model
 
