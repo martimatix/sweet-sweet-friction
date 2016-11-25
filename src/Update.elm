@@ -33,7 +33,11 @@ update msg model =
                 ! []
 
         NewGame ->
-            Model.initial ! []
+            let
+                nextModel =
+                    Model.initial
+            in
+                { nextModel | highScore = model.highScore } ! []
 
         NoOp ->
             model ! []
