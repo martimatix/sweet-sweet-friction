@@ -24,9 +24,6 @@ view { activeCircle, stationaryCircles, ticks, radialBursts, score, highScore, s
         svgCircles =
             svgActiveCircle :: svgStationaryCircles
 
-        svgCannon =
-            cannon ticks
-
         svgRadialBursts =
             List.map svgRadialBurst radialBursts
 
@@ -45,7 +42,7 @@ view { activeCircle, stationaryCircles, ticks, radialBursts, score, highScore, s
             [ svgCannonMargin
             , Svg.g [] svgCircles
             , Svg.g [] svgRadialBursts
-            , svgCannon
+            , svgCannon ticks
             , svgScore score scorePosition "Score" "start"
             , svgScore highScore highScorePosition "Hi-Score" "end"
             ]
@@ -69,8 +66,8 @@ boundsToString ( x, y ) =
     "0 0 " ++ (toString x) ++ " " ++ (toString y)
 
 
-cannon : Int -> Svg a
-cannon ticks =
+svgCannon : Int -> Svg a
+svgCannon ticks =
     let
         ( boundsX, boundsY ) =
             Bounds.game
@@ -85,10 +82,10 @@ cannon ticks =
             round initialCircle.cy - cannonHeight
 
         cannonWidth =
-            36
+            32
 
         cannonHeight =
-            85
+            81
 
         angle =
             CannonAngle.ticksToSvgAngle ticks
@@ -104,7 +101,9 @@ cannon ticks =
             , y (toString cannonY)
             , width (toString cannonWidth)
             , height (toString cannonHeight)
-            , fill "white"
+            , fill "black"
+            , stroke "white"
+            , strokeWidth "2"
             , transform (rotateTransform angle rotationPointX rotationPointY)
             ]
             []
