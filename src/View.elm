@@ -45,6 +45,7 @@ view { activeCircle, stationaryCircles, ticks, radialBursts, score, highScore, s
             , svgCannon ticks
             , svgScore score scorePosition "Score" "start"
             , svgScore highScore highScorePosition "Hi-Score" "end"
+            , svgCannonCover
             ]
 
 
@@ -202,3 +203,43 @@ svgScore score ( positionX, positionY ) scoreLabel anchor =
             , textAnchor anchor
             ]
             [ Svg.text scoreText ]
+
+
+svgCannonCover : Svg a
+svgCannonCover =
+    let
+        { cx, cy } =
+            Model.initialCircle 0
+
+        radius =
+            50
+
+        ( boundsX, boundsY ) =
+            Bounds.game
+    in
+        Svg.g []
+            [ Svg.circle
+                [ Svg.Attributes.cx (toString cx)
+                , Svg.Attributes.cy (toString cy)
+                , r (toString radius)
+                , fill "white"
+                ]
+                []
+            , Svg.rect
+                [ x (toString (boundsX // 2 - radius))
+                , y (toString cy)
+                , width (toString (radius * 2))
+                , height (toString (boundsY - (round cy)))
+                , fill "white"
+                ]
+                []
+            , Svg.text_
+                [ x (toString (boundsX // 2))
+                , y (toString (boundsY - 10))
+                , fill "black"
+                , fontFamily "Haettenschweiler"
+                , fontSize "50"
+                , textAnchor "middle"
+                ]
+                [ Svg.text "3210" ]
+            ]
