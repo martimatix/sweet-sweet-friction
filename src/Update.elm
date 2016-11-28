@@ -10,20 +10,30 @@ import Friction exposing (Result(..))
 import Bounds
 import CannonAngle
 import RadialBurst
+import LocalStorage
+import Task exposing (Task)
 
 
 type Msg
-    = Tick Float
+    = Init
+    | Tick Float
     | FireCannon
     | NewGame
+    | Load String
     | NoOp
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        Init ->
+            ( model, getFromStorage )
+
         Tick _ ->
-            ( animate model, Cmd.none )
+            model
+                |> radialBurst
+                |> animateState
+                |> saveToStorage
 
         FireCannon ->
             { model
@@ -39,15 +49,15 @@ update msg model =
             in
                 { nextModel | highScore = model.highScore } ! []
 
+        Load highScore ->
+            let
+                nextHighScore =
+                    Result.withDefault 0 (String.toInt highScore)
+            in
+                { model | highScore = nextHighScore } ! []
+
         NoOp ->
             model ! []
-
-
-animate : Model -> Model
-animate model =
-    model
-        |> radialBurst
-        |> animateState
 
 
 animateState : Model -> Model
@@ -223,3 +233,24 @@ radialBurst ({ radialBursts } as model) =
                 |> List.filter RadialBurst.visible
     in
         { model | radialBursts = nextRadialBursts }
+
+
+getFromStorage : Cmd Msg
+getFromStorage =
+    LocalStorage.get "sweet-sweet-friction"
+        |> Task.attempt
+            (\result ->
+                case result of
+                    Ok v ->
+                        Load (Maybe.withDefault "0" v)
+
+                    Err _ ->
+                        Load "0"
+            )
+
+
+saveToStorage : Model -> ( Model, Cmd Msg )
+saveToStorage model =
+    LocalStorage.set "sweet-sweet-friction" (toString model.highScore)
+        |> Task.attempt (always NoOp)
+        |> (,) model

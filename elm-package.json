@@ -1,12 +1,13 @@
 {
     "version": "1.0.0",
-    "summary": "helpful summary of your project, less than 80 characters",
-    "repository": "https://github.com/user/project.git",
-    "license": "BSD3",
+    "summary": "A Gimme Friction Baby clone written in Elm language",
+    "repository": "https://github.com/martimatix/sweet-sweet-friction.git",
+    "license": "MIT",
     "source-directories": [
         "src"
     ],
     "exposed-modules": [],
+    "native-modules": true,
     "dependencies": {
         "elm-lang/animation-frame": "1.0.1 <= v < 2.0.0",
         "elm-lang/core": "5.0.0 <= v < 6.0.0",
