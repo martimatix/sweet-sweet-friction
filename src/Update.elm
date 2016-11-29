@@ -80,6 +80,7 @@ animateState model =
 
         GameOver ->
             model
+                |> burstAllCircles
 
 
 incrementTick : Model -> Model
@@ -233,6 +234,28 @@ radialBurst ({ radialBursts } as model) =
                 |> List.filter RadialBurst.visible
     in
         { model | radialBursts = nextRadialBursts }
+
+
+burstAllCircles : Model -> Model
+burstAllCircles ({ activeCircle, stationaryCircles, radialBursts } as model) =
+    if activeCircle.cy < toFloat (Tuple.second Bounds.game) then
+        let
+            burstStationaryCircles =
+                List.map RadialBurst.create stationaryCircles
+
+            burstActiveCircle =
+                RadialBurst.create activeCircle
+
+            nextRadialBursts =
+                burstActiveCircle :: burstStationaryCircles ++ radialBursts
+        in
+            { model
+                | radialBursts = nextRadialBursts
+                , activeCircle = Model.initialCircle 10
+                , stationaryCircles = []
+            }
+    else
+        model
 
 
 getFromStorage : Cmd Msg
