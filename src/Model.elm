@@ -41,15 +41,12 @@ initial =
 initialCircle : Int -> Circle
 initialCircle rotation =
     let
-        ( x, y ) =
-            Bounds.game
-
         cx =
-            (x // 2)
+            (Bounds.gameX // 2)
                 |> toFloat
 
         cy =
-            (y - distanceOfCannonFromFloor)
+            (Bounds.gameY - distanceOfCannonFromFloor)
                 |> toFloat
 
         distanceOfCannonFromFloor =
