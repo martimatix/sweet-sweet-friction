@@ -2,7 +2,7 @@ module WallCollision exposing (collision)
 
 import Circle exposing (Circle)
 import Vector exposing (Vector)
-import Bounds exposing (Bounds)
+import Bounds
 
 
 collision : ( Circle, Vector ) -> ( Circle, Vector )

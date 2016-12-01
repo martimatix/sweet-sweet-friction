@@ -1,42 +1,25 @@
 module Bounds exposing (..)
 
 
-type alias Bounds =
-    ( Int, Int )
-
-
-game : Bounds
-game =
-    ( 500, 600 )
-
-
-active : Bounds
-active =
-    let
-        ( x, y ) =
-            game
-
-        cannonMargin =
-            110
-    in
-        ( x, y - cannonMargin )
-
-
 gameX : Int
 gameX =
-    Tuple.first game
+    500
 
 
 gameY : Int
 gameY =
-    Tuple.second game
+    600
 
 
 activeX : Int
 activeX =
-    Tuple.first active
+    gameX
 
 
 activeY : Int
 activeY =
-    Tuple.second active
+    let
+        cannonMargin =
+            110
+    in
+        gameY - cannonMargin

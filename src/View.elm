@@ -6,7 +6,7 @@ import Html exposing (Html)
 import Html.Events exposing (onClick)
 import Model exposing (Model, State(..))
 import Update exposing (Msg(..))
-import Bounds exposing (Bounds)
+import Bounds
 import CannonAngle
 import Circle exposing (Circle)
 import RadialBurst exposing (RadialBurst)
@@ -31,10 +31,10 @@ view { activeCircle, stationaryCircles, ticks, radialBursts, score, highScore, s
             ( 10, 10 )
 
         highScorePosition =
-            ( (Tuple.first Bounds.active) - scoreX, scoreY )
+            ( Bounds.activeX - scoreX, scoreY )
     in
         svg
-            [ viewBox (boundsToString Bounds.game)
+            [ viewBox gameBoundsToString
             , onClick (clickEvent state)
             , height "600px"
             , Svg.Attributes.style "background: black"
@@ -62,22 +62,19 @@ clickEvent state =
             NoOp
 
 
-boundsToString : Bounds -> String
-boundsToString ( x, y ) =
-    "0 0 " ++ (toString x) ++ " " ++ (toString y)
+gameBoundsToString : String
+gameBoundsToString =
+    "0 0 " ++ (toString Bounds.gameX) ++ " " ++ (toString Bounds.gameY)
 
 
 svgCannon : Int -> Svg a
 svgCannon ticks =
     let
-        ( boundsX, boundsY ) =
-            Bounds.game
-
         initialCircle =
             Model.initialCircle 0
 
         cannonX =
-            boundsX // 2 - cannonWidth // 2
+            Bounds.gameX // 2 - cannonWidth // 2
 
         cannonY =
             round initialCircle.cy - cannonHeight
@@ -92,7 +89,7 @@ svgCannon ticks =
             CannonAngle.ticksToSvgAngle ticks
 
         rotationPointX =
-            (toFloat boundsX) / 2
+            (toFloat Bounds.gameX) / 2
 
         rotationPointY =
             toFloat (cannonY + cannonHeight)
@@ -151,19 +148,16 @@ circleToSvg { cx, cy, radius, hitPoints, rotation } =
 svgCannonMargin : Svg a
 svgCannonMargin =
     let
-        ( boundsX, boundsY ) =
-            Bounds.active
-
         lineThickness =
             2
 
         marginHeight =
-            boundsY + lineThickness // 2
+            Bounds.activeY + lineThickness // 2
     in
         Svg.line
             [ x1 "0"
             , y1 (toString marginHeight)
-            , x2 (toString boundsX)
+            , x2 (toString Bounds.activeX)
             , y2 (toString marginHeight)
             , strokeDasharray "10, 5"
             , strokeWidth (toString lineThickness)
@@ -188,15 +182,12 @@ svgRadialBurst { cx, cy, radius, strokeWidth } =
 svgScore : Int -> ( Int, Int ) -> String -> String -> Svg a
 svgScore score ( positionX, positionY ) scoreLabel anchor =
     let
-        ( _, boundsY ) =
-            Bounds.game
-
         scoreText =
             scoreLabel ++ ": " ++ (toString score)
     in
         Svg.text_
             [ x (toString positionX)
-            , y (toString (boundsY - positionY))
+            , y (toString (Bounds.gameY - positionY))
             , fontFamily "Haettenschweiler"
             , fontSize "30"
             , fill "white"
@@ -213,9 +204,6 @@ svgCannonCover =
 
         radius =
             50
-
-        ( boundsX, boundsY ) =
-            Bounds.game
     in
         Svg.g []
             [ Svg.circle
@@ -226,16 +214,16 @@ svgCannonCover =
                 ]
                 []
             , Svg.rect
-                [ x (toString (boundsX // 2 - radius))
+                [ x (toString (Bounds.gameX // 2 - radius))
                 , y (toString cy)
                 , width (toString (radius * 2))
-                , height (toString (boundsY - (round cy)))
+                , height (toString (Bounds.gameY - (round cy)))
                 , fill "white"
                 ]
                 []
             , Svg.text_
-                [ x (toString (boundsX // 2))
-                , y (toString (boundsY - 10))
+                [ x (toString (Bounds.gameX // 2))
+                , y (toString (Bounds.gameY - 10))
                 , fill "black"
                 , fontFamily "Haettenschweiler"
                 , fontSize "50"

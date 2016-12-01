@@ -2,7 +2,7 @@ module Circle.Growth exposing (growthIncrement, ticksToFullSize)
 
 import Model
 import Circle exposing (Circle)
-import Bounds exposing (Bounds)
+import Bounds
 
 
 growthIncrement : Circle -> List Circle -> Float
@@ -17,17 +17,14 @@ growthIncrement activeCircle stationaryCircles =
 targetRadius : Circle -> List Circle -> Float
 targetRadius activeCircle stationaryCircles =
     let
-        ( boundsX, boundsY ) =
-            Bounds.active
-
         distanceToCircleEdges =
             List.map (distanceToCircleEdge activeCircle) stationaryCircles
 
         distanceToWalls =
             [ activeCircle.cx
             , activeCircle.cy
-            , (toFloat boundsX) - activeCircle.cx
-            , (toFloat boundsY) - activeCircle.cy
+            , (toFloat Bounds.activeX) - activeCircle.cx
+            , (toFloat Bounds.activeY) - activeCircle.cy
             ]
     in
         List.minimum (distanceToCircleEdges ++ distanceToWalls)

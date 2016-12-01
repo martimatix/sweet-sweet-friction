@@ -2,7 +2,7 @@ module Model exposing (..)
 
 import Circle exposing (Circle)
 import Vector exposing (Vector)
-import Bounds exposing (Bounds)
+import Bounds
 import RadialBurst exposing (RadialBurst)
 
 

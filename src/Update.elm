@@ -216,11 +216,8 @@ checkGameOver ({ velocity, activeCircle } as model) =
         circleTravellingDownwards =
             velocityY > 0
 
-        ( _, boundsY ) =
-            Bounds.active
-
         circleOutsideActiveBounds =
-            activeCircle.cy + activeCircle.radius > toFloat boundsY
+            activeCircle.cy + activeCircle.radius > toFloat Bounds.activeY
     in
         if circleTravellingDownwards && circleOutsideActiveBounds then
             { model | state = GameOver }
@@ -241,7 +238,7 @@ radialBurst ({ radialBursts } as model) =
 
 burstAllCircles : Model -> Model
 burstAllCircles ({ activeCircle, stationaryCircles, radialBursts } as model) =
-    if activeCircle.cy < toFloat (Tuple.second Bounds.game) then
+    if activeCircle.cy < toFloat (Bounds.gameY) then
         let
             burstStationaryCircles =
                 List.map RadialBurst.create stationaryCircles
