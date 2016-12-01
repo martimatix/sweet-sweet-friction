@@ -20,3 +20,23 @@ active =
             110
     in
         ( x, y - cannonMargin )
+
+
+gameX : Int
+gameX =
+    Tuple.first game
+
+
+gameY : Int
+gameY =
+    Tuple.second game
+
+
+activeX : Int
+activeX =
+    Tuple.first active
+
+
+activeY : Int
+activeY =
+    Tuple.second active

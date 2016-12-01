@@ -134,12 +134,15 @@ circularCollision ({ activeCircle, stationaryCircles, velocity } as model) =
 
 
 wallCollision : Model -> Model
-wallCollision ({ velocity, activeCircle } as model) =
+wallCollision ({ activeCircle, velocity } as model) =
     let
-        nextVelocity =
-            WC.velocityAfterCollision Bounds.game velocity activeCircle
+        ( nextActiveCircle, nextVelocity ) =
+            WC.collision ( activeCircle, velocity )
     in
-        { model | velocity = nextVelocity }
+        { model
+            | activeCircle = nextActiveCircle
+            , velocity = nextVelocity
+        }
 
 
 advanceCircle : Model -> Model

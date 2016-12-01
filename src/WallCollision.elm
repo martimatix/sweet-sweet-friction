@@ -1,48 +1,72 @@
-module WallCollision exposing (velocityAfterCollision, collision)
+module WallCollision exposing (collision)
 
 import Circle exposing (Circle)
 import Vector exposing (Vector)
 import Bounds exposing (Bounds)
 
 
-velocityAfterCollision : Bounds -> Vector -> Circle -> Vector
-velocityAfterCollision bounds velocity circle =
-    if collisionWithVerticalWall bounds circle then
-        velocityAfterVerticalWall velocity
-    else if collisionWithHorizontalWall bounds circle then
-        velocityAfterHorizontalWall velocity
+collision : ( Circle, Vector ) -> ( Circle, Vector )
+collision ( activeCircle, velocity ) =
+    ( activeCircle, velocity )
+        |> verticalCollision
+        |> horizontalCollision
+
+
+verticalCollision : ( Circle, Vector ) -> ( Circle, Vector )
+verticalCollision ( { cx, radius } as activeCircle, velocity ) =
+    if collisionLeftWall activeCircle then
+        let
+            nextActiveCircle =
+                { activeCircle | cx = 2 * radius - cx }
+
+            nextVelocity =
+                velocityAfterVerticalWall velocity
+        in
+            ( nextActiveCircle, nextVelocity )
+    else if collisionRightWall activeCircle then
+        let
+            boundsX =
+                toFloat Bounds.activeX
+
+            nextActiveCircle =
+                { activeCircle | cx = 2 * (boundsX - radius) - cx }
+
+            nextVelocity =
+                velocityAfterVerticalWall velocity
+        in
+            ( nextActiveCircle, nextVelocity )
     else
-        velocity
+        ( activeCircle, velocity )
 
 
-collision : Bounds -> Circle -> Bool
-collision bounds circle =
-    let
-        vertical =
-            collisionWithVerticalWall bounds circle
+horizontalCollision : ( Circle, Vector ) -> ( Circle, Vector )
+horizontalCollision ( { cy, radius } as activeCircle, velocity ) =
+    if collisionTopWall activeCircle then
+        let
+            nextActiveCircle =
+                { activeCircle | cy = 2 * radius - cy }
 
-        horizontal =
-            collisionWithHorizontalWall bounds circle
-    in
-        vertical || horizontal
-
-
-collisionWithVerticalWall : Bounds -> Circle -> Bool
-collisionWithVerticalWall bounds { cx, radius } =
-    let
-        ( boundsX, _ ) =
-            bounds
-    in
-        cx - radius <= 0 || cx + radius >= (toFloat boundsX)
+            nextVelocity =
+                velocityAfterHorizontalWall velocity
+        in
+            ( nextActiveCircle, nextVelocity )
+    else
+        ( activeCircle, velocity )
 
 
-collisionWithHorizontalWall : Bounds -> Circle -> Bool
-collisionWithHorizontalWall bounds { cy, radius } =
-    let
-        ( _, boundsY ) =
-            bounds
-    in
-        cy - radius <= 0 || cy + radius >= (toFloat boundsY)
+collisionLeftWall : Circle -> Bool
+collisionLeftWall { cx, radius } =
+    cx - radius <= 0
+
+
+collisionRightWall : Circle -> Bool
+collisionRightWall { cx, radius } =
+    cx + radius >= (toFloat Bounds.activeX)
+
+
+collisionTopWall : Circle -> Bool
+collisionTopWall { cy, radius } =
+    cy - radius <= 0
 
 
 velocityAfterVerticalWall : Vector -> Vector
