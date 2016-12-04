@@ -15,6 +15,8 @@ type alias Model =
     , state : State
     , score : Int
     , highScore : Int
+    , windowWidth : Int
+    , windowHeight : Int
     }
 
 
@@ -35,6 +37,8 @@ initial =
     , state = Waiting
     , score = 0
     , highScore = 0
+    , windowWidth = 0
+    , windowHeight = 0
     }
 
 

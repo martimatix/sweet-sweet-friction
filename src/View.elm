@@ -13,7 +13,7 @@ import RadialBurst exposing (RadialBurst)
 
 
 view : Model -> Html Msg
-view { activeCircle, stationaryCircles, ticks, radialBursts, score, highScore, state } =
+view { activeCircle, stationaryCircles, ticks, radialBursts, score, highScore, state, windowHeight } =
     let
         svgActiveCircle =
             circleToSvg activeCircle
@@ -36,7 +36,7 @@ view { activeCircle, stationaryCircles, ticks, radialBursts, score, highScore, s
         svg
             [ viewBox gameBoundsToString
             , onClick (clickEvent state)
-            , height "600px"
+            , height ((toString windowHeight) ++ "px")
             , Svg.Attributes.style "background: black"
             ]
             [ svgCannonMargin

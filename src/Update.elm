@@ -12,6 +12,7 @@ import CannonAngle
 import RadialBurst
 import LocalStorage
 import Task exposing (Task)
+import Window
 
 
 type Msg
@@ -20,6 +21,7 @@ type Msg
     | FireCannon
     | NewGame
     | Load String
+    | WindowResize Window.Size
     | NoOp
 
 
@@ -55,6 +57,13 @@ update msg model =
                     Result.withDefault 0 (String.toInt highScore)
             in
                 { model | highScore = nextHighScore } ! []
+
+        WindowResize windowSize ->
+            { model
+                | windowWidth = windowSize.width
+                , windowHeight = windowSize.height
+            }
+                ! []
 
         NoOp ->
             model ! []
