@@ -49,7 +49,12 @@ update msg model =
                 nextModel =
                     Model.initial
             in
-                { nextModel | highScore = model.highScore } ! []
+                { nextModel
+                    | highScore = model.highScore
+                    , windowWidth = model.windowWidth
+                    , windowHeight = model.windowHeight
+                }
+                    ! []
 
         Load highScore ->
             let

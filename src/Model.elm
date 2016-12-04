@@ -38,7 +38,7 @@ initial =
     , score = 0
     , highScore = 0
     , windowWidth = 0
-    , windowHeight = 0
+    , windowHeight = 16
     }
 
 

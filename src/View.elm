@@ -32,11 +32,14 @@ view { activeCircle, stationaryCircles, ticks, radialBursts, score, highScore, s
 
         highScorePosition =
             ( Bounds.activeX - scoreX, scoreY )
+
+        windowMargin =
+            16
     in
         svg
             [ viewBox gameBoundsToString
             , onClick (clickEvent state)
-            , height ((toString windowHeight) ++ "px")
+            , height ((toString (windowHeight - windowMargin)) ++ "px")
             , Svg.Attributes.style "background: black"
             ]
             [ svgCannonMargin
