@@ -13,7 +13,7 @@ import RadialBurst exposing (RadialBurst)
 
 
 view : Model -> Html Msg
-view { activeCircle, stationaryCircles, ticks, radialBursts, score, highScore, state, windowHeight } =
+view { activeCircle, stationaryCircles, ticks, radialBursts, score, highScore, state, windowWidth, windowHeight } =
     let
         svgActiveCircle =
             circleToSvg activeCircle
@@ -32,16 +32,14 @@ view { activeCircle, stationaryCircles, ticks, radialBursts, score, highScore, s
 
         highScorePosition =
             ( Bounds.activeX - scoreX, scoreY )
-
-        windowMargin =
-            16
     in
         svg
-            [ viewBox gameBoundsToString
-            , onClick (clickEvent state)
-            , height ((toString (windowHeight - windowMargin)) ++ "px")
-            , Svg.Attributes.style "background: black"
-            ]
+            ([ viewBox gameBoundsToString
+             , onClick (clickEvent state)
+             , Svg.Attributes.style "background: black"
+             , gameDimensions windowWidth windowHeight
+             ]
+            )
             [ svgCannonMargin
             , Svg.g [] svgCircles
             , Svg.g [] svgRadialBursts
@@ -50,6 +48,30 @@ view { activeCircle, stationaryCircles, ticks, radialBursts, score, highScore, s
             , svgScore highScore highScorePosition "Hi-Score" "end"
             , svgCannonCover
             ]
+
+
+gameDimensions : Int -> Int -> Svg.Attribute msg
+gameDimensions windowWidth windowHeight =
+    let
+        gameRatio =
+            toFloat Bounds.gameX / toFloat Bounds.gameY
+
+        windowMargin =
+            16
+
+        width =
+            windowWidth - windowMargin
+
+        height =
+            windowHeight - windowMargin
+
+        windowRatio =
+            toFloat width / toFloat height
+    in
+        if windowRatio > gameRatio then
+            Svg.Attributes.height ((toString height) ++ "px")
+        else
+            Svg.Attributes.width ((toString width) ++ "px")
 
 
 clickEvent : State -> Msg

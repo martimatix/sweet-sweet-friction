@@ -29,17 +29,24 @@ type State
 
 initial : Model
 initial =
-    { stationaryCircles = []
-    , activeCircle = (initialCircle 5)
-    , radialBursts = []
-    , velocity = ( 0, 0 )
-    , ticks = 0
-    , state = Waiting
-    , score = 0
-    , highScore = 0
-    , windowWidth = 0
-    , windowHeight = 16
-    }
+    let
+        initialRotation =
+            5
+
+        windowMargin =
+            16
+    in
+        { stationaryCircles = []
+        , activeCircle = (initialCircle initialRotation)
+        , radialBursts = []
+        , velocity = ( 0, 0 )
+        , ticks = 0
+        , state = Waiting
+        , score = 0
+        , highScore = 0
+        , windowWidth = windowMargin
+        , windowHeight = windowMargin
+        }
 
 
 initialCircle : Int -> Circle
