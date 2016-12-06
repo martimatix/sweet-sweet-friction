@@ -42,4 +42,4 @@ distanceToCircleEdge activeCircle stationaryCircle =
 
 ticksToFullSize : Int
 ticksToFullSize =
-    50
+    20
