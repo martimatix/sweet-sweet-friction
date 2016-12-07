@@ -48,6 +48,7 @@ view model =
             , svgScore model.score scorePosition "Score" "start"
             , svgScore model.highScore highScorePosition "Hi-Score" "end"
             , svgCannonCover
+            , svgGameOver model.state
             ]
 
 
@@ -269,7 +270,7 @@ svgGameTitle backgroundTextOpacity =
         , fontSize "80"
         , strokeOpacity (toString backgroundTextOpacity)
         ]
-        (List.map svgGameTitleLine
+        (List.map svgGameTextLine
             [ "SWEET"
             , "SWEET"
             , "FRICTION"
@@ -277,8 +278,8 @@ svgGameTitle backgroundTextOpacity =
         )
 
 
-svgGameTitleLine : String -> Svg a
-svgGameTitleLine text =
+svgGameTextLine : String -> Svg a
+svgGameTextLine text =
     let
         screenCentre =
             toString (Bounds.gameX // 2)
@@ -289,3 +290,24 @@ svgGameTitleLine text =
             , textAnchor "middle"
             ]
             [ Svg.text text ]
+
+
+svgGameOver : State -> Svg a
+svgGameOver state =
+    case state of
+        GameOver ->
+            Svg.text_
+                [ y "200"
+                , fill "rgb(255, 163, 255)"
+                , fontFamily "Haettenschweiler"
+                , fontSize "80"
+                , fillOpacity (toString 1)
+                ]
+                (List.map svgGameTextLine
+                    [ "GAME"
+                    , "OVER"
+                    ]
+                )
+
+        _ ->
+            Svg.g [] []
