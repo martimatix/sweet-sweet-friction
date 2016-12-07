@@ -13,19 +13,19 @@ import RadialBurst exposing (RadialBurst)
 
 
 view : Model -> Html Msg
-view { activeCircle, stationaryCircles, ticks, radialBursts, score, highScore, state, windowWidth, windowHeight } =
+view model =
     let
         svgActiveCircle =
-            circleToSvg activeCircle
+            circleToSvg model.activeCircle
 
         svgStationaryCircles =
-            List.map circleToSvg stationaryCircles
+            List.map circleToSvg model.stationaryCircles
 
         svgCircles =
             svgActiveCircle :: svgStationaryCircles
 
         svgRadialBursts =
-            List.map svgRadialBurst radialBursts
+            List.map svgRadialBurst model.radialBursts
 
         (( scoreX, scoreY ) as scorePosition) =
             ( 10, 10 )
@@ -35,17 +35,18 @@ view { activeCircle, stationaryCircles, ticks, radialBursts, score, highScore, s
     in
         svg
             ([ viewBox gameBoundsToString
-             , onClick (clickEvent state)
+             , onClick (clickEvent model.state)
              , Svg.Attributes.style "background: black"
-             , gameDimensions windowWidth windowHeight
+             , gameDimensions model.windowWidth model.windowHeight
              ]
             )
             [ svgCannonMargin
+            , svgGameTitle model.backgroundTextOpacity
             , Svg.g [] svgCircles
             , Svg.g [] svgRadialBursts
-            , svgCannon ticks
-            , svgScore score scorePosition "Score" "start"
-            , svgScore highScore highScorePosition "Hi-Score" "end"
+            , svgCannon model.ticks
+            , svgScore model.score scorePosition "Score" "start"
+            , svgScore model.highScore highScorePosition "Hi-Score" "end"
             , svgCannonCover
             ]
 
@@ -256,3 +257,35 @@ svgCannonCover =
                 ]
                 [ Svg.text "3210" ]
             ]
+
+
+svgGameTitle : Float -> Svg a
+svgGameTitle backgroundTextOpacity =
+    Svg.text_
+        [ y "150"
+        , stroke "rgb(255, 163, 255)"
+        , strokeWidth "1px"
+        , fontFamily "Haettenschweiler"
+        , fontSize "80"
+        , strokeOpacity (toString backgroundTextOpacity)
+        ]
+        (List.map svgGameTitleLine
+            [ "SWEET"
+            , "SWEET"
+            , "FRICTION"
+            ]
+        )
+
+
+svgGameTitleLine : String -> Svg a
+svgGameTitleLine text =
+    let
+        screenCentre =
+            toString (Bounds.gameX // 2)
+    in
+        Svg.tspan
+            [ dy "60"
+            , x screenCentre
+            , textAnchor "middle"
+            ]
+            [ Svg.text text ]

@@ -17,6 +17,7 @@ type alias Model =
     , highScore : Int
     , windowWidth : Int
     , windowHeight : Int
+    , backgroundTextOpacity : Float
     }
 
 
@@ -46,6 +47,7 @@ initial =
         , highScore = 0
         , windowWidth = windowMargin
         , windowHeight = windowMargin
+        , backgroundTextOpacity = 0
         }
 
 

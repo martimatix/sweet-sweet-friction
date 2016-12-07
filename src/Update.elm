@@ -80,6 +80,7 @@ animateState model =
         Waiting ->
             model
                 |> incrementTick
+                |> fadeInBackgroundText
 
         Travelling ->
             model
@@ -87,6 +88,7 @@ animateState model =
                 |> wallCollision
                 |> advanceCircle
                 |> applyFriction
+                |> fadeOutBackgroundText
                 |> checkGameOver
 
         Growing growthIncrement growTicks ->
@@ -219,6 +221,39 @@ growCircle growthIncrement growTicks model =
         initialiseNextTurn model
     else
         increaseActiveCircleRadius growthIncrement growTicks model
+
+
+fadeInBackgroundText : Model -> Model
+fadeInBackgroundText ({ backgroundTextOpacity } as model) =
+    let
+        fadeRate =
+            0.02
+
+        nextBackgroundTextOpacity =
+            min 1 (backgroundTextOpacity + fadeRate)
+
+        stationaryCirclesPresent =
+            List.length model.stationaryCircles > 0
+
+        gameInProgress =
+            stationaryCirclesPresent || model.score > 0
+    in
+        if gameInProgress then
+            model
+        else
+            { model | backgroundTextOpacity = nextBackgroundTextOpacity }
+
+
+fadeOutBackgroundText : Model -> Model
+fadeOutBackgroundText ({ backgroundTextOpacity } as model) =
+    let
+        fadeRate =
+            0.01
+
+        nextBackgroundTextOpacity =
+            max 0 (backgroundTextOpacity - fadeRate)
+    in
+        { model | backgroundTextOpacity = nextBackgroundTextOpacity }
 
 
 checkGameOver : Model -> Model
