@@ -53,6 +53,7 @@ update msg model =
                     | highScore = model.highScore
                     , windowWidth = model.windowWidth
                     , windowHeight = model.windowHeight
+                    , backgroundTextOpacity = 0
                 }
                     ! []
 
@@ -80,7 +81,6 @@ animateState model =
         Waiting ->
             model
                 |> incrementTick
-                |> fadeInBackgroundText
 
         Travelling ->
             model
@@ -221,27 +221,6 @@ growCircle growthIncrement growTicks model =
         initialiseNextTurn model
     else
         increaseActiveCircleRadius growthIncrement growTicks model
-
-
-fadeInBackgroundText : Model -> Model
-fadeInBackgroundText ({ backgroundTextOpacity } as model) =
-    let
-        fadeRate =
-            0.02
-
-        nextBackgroundTextOpacity =
-            min 1 (backgroundTextOpacity + fadeRate)
-
-        stationaryCirclesPresent =
-            List.length model.stationaryCircles > 0
-
-        gameInProgress =
-            stationaryCirclesPresent || model.score > 0
-    in
-        if gameInProgress then
-            model
-        else
-            { model | backgroundTextOpacity = nextBackgroundTextOpacity }
 
 
 fadeOutBackgroundText : Model -> Model

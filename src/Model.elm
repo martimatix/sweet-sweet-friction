@@ -47,7 +47,7 @@ initial =
         , highScore = 0
         , windowWidth = windowMargin
         , windowHeight = windowMargin
-        , backgroundTextOpacity = 0
+        , backgroundTextOpacity = 1
         }
 
 
