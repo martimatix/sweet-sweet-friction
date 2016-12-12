@@ -50,7 +50,7 @@ update msg model =
                     Model.initial
 
                 nextRadialBursts =
-                    burstStationaryCircles model.stationaryCircles model.radialBursts
+                    burstStationaryCircles model.stationaryCircles
             in
                 { initialModel
                     | highScore = model.highScore
@@ -268,13 +268,9 @@ radialBurst ({ radialBursts } as model) =
         { model | radialBursts = nextRadialBursts }
 
 
-burstStationaryCircles : List Circle -> List RadialBurst -> List RadialBurst
-burstStationaryCircles stationaryCircles radialBursts =
-    let
-        burstsFromStationaryCircles =
-            List.map RadialBurst.create stationaryCircles
-    in
-        burstsFromStationaryCircles ++ radialBursts
+burstStationaryCircles : List Circle -> List RadialBurst
+burstStationaryCircles stationaryCircles =
+    List.map RadialBurst.create stationaryCircles
 
 
 burstActiveCircle : Model -> Model
