@@ -9,7 +9,7 @@ import Vector exposing (Vector)
 import Friction exposing (Result(..))
 import Bounds
 import CannonAngle
-import RadialBurst
+import RadialBurst exposing (RadialBurst)
 import LocalStorage
 import Task exposing (Task)
 import Window
@@ -46,14 +46,18 @@ update msg model =
 
         NewGame ->
             let
-                nextModel =
+                initialModel =
                     Model.initial
+
+                nextRadialBursts =
+                    burstStationaryCircles model.stationaryCircles model.radialBursts
             in
-                { nextModel
+                { initialModel
                     | highScore = model.highScore
                     , windowWidth = model.windowWidth
                     , windowHeight = model.windowHeight
                     , backgroundTextOpacity = 0
+                    , radialBursts = nextRadialBursts
                 }
                     ! []
 
@@ -96,7 +100,7 @@ animateState model =
 
         GameOver ->
             model
-                |> burstAllCircles
+                |> burstActiveCircle
 
 
 incrementTick : Model -> Model
@@ -264,26 +268,28 @@ radialBurst ({ radialBursts } as model) =
         { model | radialBursts = nextRadialBursts }
 
 
-burstAllCircles : Model -> Model
-burstAllCircles ({ activeCircle, stationaryCircles, radialBursts } as model) =
-    if activeCircle.cy < toFloat (Bounds.gameY) then
-        let
-            burstStationaryCircles =
-                List.map RadialBurst.create stationaryCircles
+burstStationaryCircles : List Circle -> List RadialBurst -> List RadialBurst
+burstStationaryCircles stationaryCircles radialBursts =
+    let
+        burstsFromStationaryCircles =
+            List.map RadialBurst.create stationaryCircles
+    in
+        burstsFromStationaryCircles ++ radialBursts
 
-            burstActiveCircle =
-                RadialBurst.create activeCircle
 
-            nextRadialBursts =
-                burstActiveCircle :: burstStationaryCircles ++ radialBursts
-        in
-            { model
-                | radialBursts = nextRadialBursts
-                , activeCircle = Model.initialCircle 10
-                , stationaryCircles = []
-            }
-    else
-        model
+burstActiveCircle : Model -> Model
+burstActiveCircle ({ activeCircle, radialBursts } as model) =
+    let
+        burstActiveCircle =
+            RadialBurst.create activeCircle
+
+        nextRadialBursts =
+            burstActiveCircle :: radialBursts
+    in
+        { model
+            | radialBursts = nextRadialBursts
+            , activeCircle = Model.initialCircle 0
+        }
 
 
 getFromStorage : Cmd Msg
