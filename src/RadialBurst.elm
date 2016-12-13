@@ -12,7 +12,7 @@ type alias RadialBurst =
 
 
 create : Circle -> RadialBurst
-create ({ cx, cy, radius } as circle) =
+create { cx, cy, radius } =
     { cx = cx
     , cy = cy
     , radius = radius
