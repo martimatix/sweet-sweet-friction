@@ -34,12 +34,12 @@ view model =
             ( Bounds.activeX - scoreX, scoreY )
     in
         svg
-            ([ viewBox gameBoundsToString
-             , onClick (clickEvent model.state)
-             , Svg.Attributes.style "background: black"
-             , gameDimensions model.windowWidth model.windowHeight
-             ]
-            )
+            [ viewBox gameBoundsToString
+            , onClick (clickEvent model.state)
+            , Svg.Attributes.style "background: black"
+            , gameDimensions model.windowWidth model.windowHeight
+            , class "noselect"
+            ]
             [ svgCannonMargin
             , svgGameTitle model.backgroundTextOpacity
             , Svg.g [] svgCircles
