@@ -3,7 +3,7 @@ module View exposing (view)
 import Svg exposing (Svg, svg)
 import Svg.Attributes exposing (..)
 import Html exposing (Html)
-import Html.Events exposing (onClick)
+import Svg.Events exposing (onClick)
 import Model exposing (Model, State(..))
 import Update exposing (Msg(..))
 import Bounds
