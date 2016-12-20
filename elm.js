@@ -9408,7 +9408,9 @@ var _martimatix$sweet_sweet_friction$Model$Model = function (a) {
 								return function (i) {
 									return function (j) {
 										return function (k) {
-											return {stationaryCircles: a, activeCircle: b, radialBursts: c, velocity: d, ticks: e, state: f, score: g, highScore: h, windowWidth: i, windowHeight: j, backgroundTextOpacity: k};
+											return function (l) {
+												return {stationaryCircles: a, activeCircle: b, radialBursts: c, velocity: d, ticks: e, state: f, score: g, highScore: h, windowWidth: i, windowHeight: j, backgroundTextOpacity: k, debounceTicks: l};
+											};
 										};
 									};
 								};
@@ -9441,7 +9443,8 @@ var _martimatix$sweet_sweet_friction$Model$initial = function () {
 		highScore: 0,
 		windowWidth: windowMargin,
 		windowHeight: windowMargin,
-		backgroundTextOpacity: 1
+		backgroundTextOpacity: 1,
+		debounceTicks: 0
 	};
 }();
 
@@ -9862,6 +9865,22 @@ var _martimatix$sweet_sweet_friction$Update$action = function (model) {
 				{ctor: '[]'});
 	}
 };
+var _martimatix$sweet_sweet_friction$Update$debounceAction = function (model) {
+	var ticksUntilNextActionPermitted = 20;
+	var nextActionPermitted = _elm_lang$core$Native_Utils.cmp(ticksUntilNextActionPermitted, model.debounceTicks) < 1;
+	return nextActionPermitted ? _martimatix$sweet_sweet_friction$Update$action(
+		_elm_lang$core$Native_Utils.update(
+			model,
+			{debounceTicks: 0})) : A2(
+		_elm_lang$core$Platform_Cmd_ops['!'],
+		model,
+		{ctor: '[]'});
+};
+var _martimatix$sweet_sweet_friction$Update$incrementDebounceTick = function (model) {
+	return _elm_lang$core$Native_Utils.update(
+		model,
+		{debounceTicks: model.debounceTicks + 1});
+};
 var _martimatix$sweet_sweet_friction$Update$NoOp = {ctor: 'NoOp'};
 var _martimatix$sweet_sweet_friction$Update$saveToStorage = function (model) {
 	return A2(
@@ -9905,9 +9924,10 @@ var _martimatix$sweet_sweet_friction$Update$update = F2(
 			case 'Tick':
 				return _martimatix$sweet_sweet_friction$Update$saveToStorage(
 					_martimatix$sweet_sweet_friction$Update$animateState(
-						_martimatix$sweet_sweet_friction$Update$radialBurst(model)));
+						_martimatix$sweet_sweet_friction$Update$radialBurst(
+							_martimatix$sweet_sweet_friction$Update$incrementDebounceTick(model))));
 			case 'UserInput':
-				return _martimatix$sweet_sweet_friction$Update$action(model);
+				return _martimatix$sweet_sweet_friction$Update$debounceAction(model);
 			case 'Load':
 				var nextHighScore = A2(
 					_elm_lang$core$Result$withDefault,

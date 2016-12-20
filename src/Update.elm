@@ -33,12 +33,13 @@ update msg model =
 
         Tick _ ->
             model
+                |> incrementDebounceTick
                 |> radialBurst
                 |> animateState
                 |> saveToStorage
 
-        UserInput _ ->
-            action model
+        UserInput touch ->
+            debounceAction model
 
         Load highScore ->
             let
@@ -55,6 +56,26 @@ update msg model =
                 ! []
 
         NoOp ->
+            model ! []
+
+
+incrementDebounceTick : Model -> Model
+incrementDebounceTick model =
+    { model | debounceTicks = model.debounceTicks + 1 }
+
+
+debounceAction : Model -> ( Model, Cmd msg )
+debounceAction model =
+    let
+        ticksUntilNextActionPermitted =
+            20
+
+        nextActionPermitted =
+            ticksUntilNextActionPermitted <= model.debounceTicks
+    in
+        if nextActionPermitted then
+            action { model | debounceTicks = 0 }
+        else
             model ! []
 
 

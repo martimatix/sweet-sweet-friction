@@ -18,6 +18,7 @@ type alias Model =
     , windowWidth : Int
     , windowHeight : Int
     , backgroundTextOpacity : Float
+    , debounceTicks : Int
     }
 
 
@@ -48,6 +49,7 @@ initial =
         , windowWidth = windowMargin
         , windowHeight = windowMargin
         , backgroundTextOpacity = 1
+        , debounceTicks = 0
         }
 
 
