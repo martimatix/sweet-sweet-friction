@@ -13,13 +13,13 @@ import RadialBurst exposing (RadialBurst)
 import LocalStorage
 import Task exposing (Task)
 import Window
+import TouchEvents
 
 
 type Msg
     = Init
     | Tick Float
-    | FireCannon
-    | NewGame
+    | UserInput TouchEvents.Touch
     | Load String
     | WindowResize Window.Size
     | NoOp
@@ -37,29 +37,8 @@ update msg model =
                 |> animateState
                 |> saveToStorage
 
-        FireCannon ->
-            { model
-                | state = Travelling
-                , velocity = initialVelocity model.ticks
-            }
-                ! []
-
-        NewGame ->
-            let
-                initialModel =
-                    Model.initial
-
-                nextRadialBursts =
-                    burstStationaryCircles model.stationaryCircles
-            in
-                { initialModel
-                    | highScore = model.highScore
-                    , windowWidth = model.windowWidth
-                    , windowHeight = model.windowHeight
-                    , backgroundTextOpacity = 0
-                    , radialBursts = nextRadialBursts
-                }
-                    ! []
+        UserInput _ ->
+            action model
 
         Load highScore ->
             let
@@ -77,6 +56,47 @@ update msg model =
 
         NoOp ->
             model ! []
+
+
+action : Model -> ( Model, Cmd msg )
+action model =
+    case model.state of
+        Waiting ->
+            fireCannon model
+
+        GameOver ->
+            newGame model
+
+        _ ->
+            model ! []
+
+
+newGame : Model -> ( Model, Cmd msg )
+newGame model =
+    let
+        initialModel =
+            Model.initial
+
+        nextRadialBursts =
+            burstStationaryCircles model.stationaryCircles
+    in
+        { initialModel
+            | highScore = model.highScore
+            , windowWidth = model.windowWidth
+            , windowHeight = model.windowHeight
+            , backgroundTextOpacity = 0
+            , radialBursts = nextRadialBursts
+        }
+            ! []
+
+
+fireCannon : Model -> ( Model, Cmd msg )
+fireCannon model =
+    { model
+        | state = Travelling
+        , velocity = initialVelocity model.ticks
+    }
+        ! []
 
 
 animateState : Model -> Model

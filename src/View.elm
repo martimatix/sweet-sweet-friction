@@ -4,6 +4,7 @@ import Svg exposing (Svg, svg)
 import Svg.Attributes exposing (..)
 import Html exposing (Html)
 import Svg.Events exposing (onClick)
+import TouchEvents exposing (onTouchStart, emptyTouch)
 import Model exposing (Model, State(..))
 import Update exposing (Msg(..))
 import Bounds
@@ -35,7 +36,8 @@ view model =
     in
         svg
             [ viewBox gameBoundsToString
-            , onClick (clickEvent model.state)
+            , onTouchStart UserInput
+            , onClick (UserInput emptyTouch)
             , Svg.Attributes.style "background: black"
             , gameDimensions model.windowWidth model.windowHeight
             , class "noselect"
@@ -76,17 +78,18 @@ gameDimensions windowWidth windowHeight =
             Svg.Attributes.width ((toString width) ++ "px")
 
 
-clickEvent : State -> Msg
-clickEvent state =
-    case state of
-        Waiting ->
-            FireCannon
 
-        GameOver ->
-            NewGame
-
-        _ ->
-            NoOp
+-- clickEvent : State -> Msg
+-- clickEvent state =
+--     case state of
+--         Waiting ->
+--             FireCannon
+--
+--         GameOver ->
+--             NewGame
+--
+--         _ ->
+--             NoOp
 
 
 gameBoundsToString : String
