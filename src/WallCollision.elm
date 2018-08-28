@@ -1,8 +1,8 @@
 module WallCollision exposing (collision)
 
+import Bounds
 import Circle exposing (Circle)
 import Vector exposing (Vector)
-import Bounds
 
 
 collision : ( Circle, Vector ) -> ( Circle, Vector )
@@ -22,7 +22,8 @@ verticalCollision ( { cx, radius } as activeCircle, velocity ) =
             nextVelocity =
                 velocityAfterVerticalWall velocity
         in
-            ( nextActiveCircle, nextVelocity )
+        ( nextActiveCircle, nextVelocity )
+
     else if collisionRightWall activeCircle then
         let
             boundsX =
@@ -34,7 +35,8 @@ verticalCollision ( { cx, radius } as activeCircle, velocity ) =
             nextVelocity =
                 velocityAfterVerticalWall velocity
         in
-            ( nextActiveCircle, nextVelocity )
+        ( nextActiveCircle, nextVelocity )
+
     else
         ( activeCircle, velocity )
 
@@ -49,7 +51,8 @@ horizontalCollision ( { cy, radius } as activeCircle, velocity ) =
             nextVelocity =
                 velocityAfterHorizontalWall velocity
         in
-            ( nextActiveCircle, nextVelocity )
+        ( nextActiveCircle, nextVelocity )
+
     else
         ( activeCircle, velocity )
 
@@ -61,7 +64,7 @@ collisionLeftWall { cx, radius } =
 
 collisionRightWall : Circle -> Bool
 collisionRightWall { cx, radius } =
-    cx + radius >= (toFloat Bounds.activeX)
+    cx + radius >= toFloat Bounds.activeX
 
 
 collisionTopWall : Circle -> Bool

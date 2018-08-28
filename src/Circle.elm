@@ -1,4 +1,4 @@
-module Circle exposing (..)
+module Circle exposing (Circle, advance, distanceBetweenCentres, vectorBetweenCentres)
 
 import Vector exposing (Vector)
 
@@ -14,7 +14,7 @@ type alias Circle =
 
 advance : Vector -> Circle -> Circle
 advance ( x, y ) ({ cx, cy } as circle) =
-    { circle | cx = (cx + x), cy = (cy + y) }
+    { circle | cx = cx + x, cy = cy + y }
 
 
 vectorBetweenCentres : Circle -> Circle -> Vector

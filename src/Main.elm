@@ -1,27 +1,35 @@
-module Main exposing (..)
+module Main exposing (initialSizeCmd, main, sizeToMsg, subscriptions)
 
-import Model exposing (Model)
-import Update exposing (update, Msg(..))
-import View exposing (view)
+-- import AnimationFrame
+-- animation frame is now part of the browser https://package.elm-lang.org/packages/elm/browser/latest/Browser-Events#onAnimationFrame
+
+import Browser
+import Browser.Dom as Dom
+import Browser.Events as Events
 import Html exposing (Html)
-import AnimationFrame
+import Model exposing (Model)
 import Task
-import Window
-import Task
+import Update exposing (Msg(..), update)
+import View exposing (view)
 
 
-main : Program Never Model Msg
 main =
-    Html.program
-        { init =
-            Model.initial
-                ! [ Task.perform (always Init) (Task.succeed 0)
-                  , initialSizeCmd
-                  ]
+    Browser.element
+        { init = init
         , view = view
         , update = update
         , subscriptions = subscriptions
         }
+
+
+init : () -> ( Model, Cmd Msg )
+init flags =
+    ( Model.initial
+    , Cmd.batch
+        [ Task.perform (always Init) (Task.succeed 0)
+        , initialSizeCmd
+        ]
+    )
 
 
 
@@ -31,8 +39,8 @@ main =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ AnimationFrame.diffs Tick
-        , Window.resizes sizeToMsg
+        [ Events.onAnimationFrameDelta Tick
+        , Events.onResize sizeToMsg
         ]
 
 
@@ -42,9 +50,14 @@ subscriptions model =
 
 initialSizeCmd : Cmd Msg
 initialSizeCmd =
-    Task.perform sizeToMsg Window.size
+    Task.perform initViewport Dom.getViewport
 
 
-sizeToMsg : Window.Size -> Msg
-sizeToMsg size =
-    WindowResize size
+initViewport : Dom.Viewport -> Msg
+initViewport { viewport } =
+    WindowResize (round viewport.width) (round viewport.height)
+
+
+sizeToMsg : Int -> Int -> Msg
+sizeToMsg x y =
+    WindowResize x y

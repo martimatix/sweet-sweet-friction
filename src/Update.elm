@@ -1,27 +1,30 @@
-module Update exposing (update, Msg(..))
+module Update exposing (Msg(..), update)
 
-import Model exposing (..)
+-- use https://github.com/mpizenberg/elm-pointer-events
+-- Use Browser.Dom to get the current window size, and use Browser.Events to detect when the window changes size or is not visible at the moment.
+
+import Bounds
+import Browser.Dom
+import Browser.Events
+import CannonAngle
 import Circle exposing (Circle)
 import Circle.Collision as CC
 import Circle.Growth as Growth
-import WallCollision as WC
-import Vector exposing (Vector)
 import Friction exposing (Result(..))
-import Bounds
-import CannonAngle
+import Html.Events.Extra.Touch as Touch
+import Model exposing (..)
 import RadialBurst exposing (RadialBurst)
-import LocalStorage
 import Task exposing (Task)
-import Window
-import TouchEvents
+import Vector exposing (Vector)
+import WallCollision as WC
 
 
 type Msg
     = Init
     | Tick Float
-    | UserInput TouchEvents.Touch
+    | UserInput Touch.Event
     | Load String
-    | WindowResize Window.Size
+    | WindowResize Int Int
     | NoOp
 
 
@@ -29,34 +32,39 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Init ->
-            ( model, getFromStorage )
+            ( model, Cmd.none )
 
         Tick _ ->
-            model
+            ( model
                 |> incrementDebounceTick
                 |> radialBurst
                 |> animateState
-                |> saveToStorage
+            , Cmd.none
+            )
 
+        -- |> saveToStorage
         UserInput touch ->
             debounceAction model
 
         Load highScore ->
             let
                 nextHighScore =
-                    Result.withDefault 0 (String.toInt highScore)
+                    Maybe.withDefault 0 (String.toInt highScore)
             in
-                { model | highScore = nextHighScore } ! []
+            ( { model | highScore = nextHighScore }
+            , Cmd.none
+            )
 
-        WindowResize windowSize ->
-            { model
-                | windowWidth = windowSize.width
-                , windowHeight = windowSize.height
-            }
-                ! []
+        WindowResize width height ->
+            ( { model
+                | windowWidth = width
+                , windowHeight = height
+              }
+            , Cmd.none
+            )
 
         NoOp ->
-            model ! []
+            ( model, Cmd.none )
 
 
 incrementDebounceTick : Model -> Model
@@ -73,10 +81,11 @@ debounceAction model =
         nextActionPermitted =
             ticksUntilNextActionPermitted <= model.debounceTicks
     in
-        if nextActionPermitted then
-            action { model | debounceTicks = 0 }
-        else
-            model ! []
+    if nextActionPermitted then
+        action { model | debounceTicks = 0 }
+
+    else
+        ( model, Cmd.none )
 
 
 action : Model -> ( Model, Cmd msg )
@@ -89,7 +98,7 @@ action model =
             newGame model
 
         _ ->
-            model ! []
+            ( model, Cmd.none )
 
 
 newGame : Model -> ( Model, Cmd msg )
@@ -101,23 +110,25 @@ newGame model =
         nextRadialBursts =
             burstStationaryCircles model.stationaryCircles
     in
-        { initialModel
-            | highScore = model.highScore
-            , windowWidth = model.windowWidth
-            , windowHeight = model.windowHeight
-            , backgroundTextOpacity = 0
-            , radialBursts = nextRadialBursts
-        }
-            ! []
+    ( { initialModel
+        | highScore = model.highScore
+        , windowWidth = model.windowWidth
+        , windowHeight = model.windowHeight
+        , backgroundTextOpacity = 0
+        , radialBursts = nextRadialBursts
+      }
+    , Cmd.none
+    )
 
 
 fireCannon : Model -> ( Model, Cmd msg )
 fireCannon model =
-    { model
+    ( { model
         | state = Travelling
         , velocity = initialVelocity model.ticks
-    }
-        ! []
+      }
+    , Cmd.none
+    )
 
 
 animateState : Model -> Model
@@ -160,9 +171,9 @@ initialVelocity ticks =
         velocityMagnitude =
             8
     in
-        ( velocityMagnitude * cos (angle |> degrees)
-        , velocityMagnitude * sin (angle |> degrees) |> negate
-        )
+    ( velocityMagnitude * cos (angle |> degrees)
+    , velocityMagnitude * sin (angle |> degrees) |> negate
+    )
 
 
 circularCollision : Model -> Model
@@ -185,13 +196,13 @@ circularCollision ({ activeCircle, stationaryCircles, velocity } as model) =
         nextScore =
             List.length deadCircles + model.score
     in
-        { model
-            | velocity = nextVelocity
-            , stationaryCircles = damagedCollidingCircles ++ otherCircles
-            , radialBursts = newRadialBursts ++ model.radialBursts
-            , score = nextScore
-            , highScore = max nextScore model.highScore
-        }
+    { model
+        | velocity = nextVelocity
+        , stationaryCircles = damagedCollidingCircles ++ otherCircles
+        , radialBursts = newRadialBursts ++ model.radialBursts
+        , score = nextScore
+        , highScore = max nextScore model.highScore
+    }
 
 
 wallCollision : Model -> Model
@@ -200,10 +211,10 @@ wallCollision ({ activeCircle, velocity } as model) =
         ( nextActiveCircle, nextVelocity ) =
             WC.collision ( activeCircle, velocity )
     in
-        { model
-            | activeCircle = nextActiveCircle
-            , velocity = nextVelocity
-        }
+    { model
+        | activeCircle = nextActiveCircle
+        , velocity = nextVelocity
+    }
 
 
 advanceCircle : Model -> Model
@@ -212,7 +223,7 @@ advanceCircle model =
         nextActiveCircle =
             Circle.advance model.velocity model.activeCircle
     in
-        { model | activeCircle = nextActiveCircle }
+    { model | activeCircle = nextActiveCircle }
 
 
 applyFriction : Model -> Model
@@ -229,23 +240,23 @@ applyFriction ({ activeCircle, stationaryCircles } as model) =
                 growthTicks =
                     Growth.ticksToFullSize
             in
-                { model
-                    | velocity = ( 0, 0 )
-                    , state = Growing growthIncrement growthTicks
-                }
+            { model
+                | velocity = ( 0, 0 )
+                , state = Growing growthIncrement growthTicks
+            }
 
 
 initialiseNextTurn : Model -> Model
 initialiseNextTurn ({ activeCircle, stationaryCircles, ticks } as model) =
     let
         randomRotation =
-            ticks % 30 - 15
+            modBy 30 ticks - 15
     in
-        { model
-            | state = Waiting
-            , activeCircle = Model.initialCircle randomRotation
-            , stationaryCircles = activeCircle :: stationaryCircles
-        }
+    { model
+        | state = Waiting
+        , activeCircle = Model.initialCircle randomRotation
+        , stationaryCircles = activeCircle :: stationaryCircles
+    }
 
 
 increaseActiveCircleRadius : Float -> Int -> Model -> Model
@@ -254,16 +265,17 @@ increaseActiveCircleRadius growthIncrement growTicks ({ activeCircle } as model)
         nextCircle =
             { activeCircle | radius = activeCircle.radius + growthIncrement }
     in
-        { model
-            | activeCircle = nextCircle
-            , state = Growing growthIncrement (growTicks - 1)
-        }
+    { model
+        | activeCircle = nextCircle
+        , state = Growing growthIncrement (growTicks - 1)
+    }
 
 
 growCircle : Float -> Int -> Model -> Model
 growCircle growthIncrement growTicks model =
     if growTicks == 0 then
         initialiseNextTurn model
+
     else
         increaseActiveCircleRadius growthIncrement growTicks model
 
@@ -277,7 +289,7 @@ fadeOutBackgroundText ({ backgroundTextOpacity } as model) =
         nextBackgroundTextOpacity =
             max 0 (backgroundTextOpacity - fadeRate)
     in
-        { model | backgroundTextOpacity = nextBackgroundTextOpacity }
+    { model | backgroundTextOpacity = nextBackgroundTextOpacity }
 
 
 checkGameOver : Model -> Model
@@ -292,10 +304,11 @@ checkGameOver ({ velocity, activeCircle } as model) =
         circleOutsideActiveBounds =
             activeCircle.cy + activeCircle.radius > toFloat Bounds.activeY
     in
-        if circleTravellingDownwards && circleOutsideActiveBounds then
-            { model | state = GameOver }
-        else
-            model
+    if circleTravellingDownwards && circleOutsideActiveBounds then
+        { model | state = GameOver }
+
+    else
+        model
 
 
 radialBurst : Model -> Model
@@ -306,7 +319,7 @@ radialBurst ({ radialBursts } as model) =
                 |> List.map RadialBurst.advance
                 |> List.filter RadialBurst.visible
     in
-        { model | radialBursts = nextRadialBursts }
+    { model | radialBursts = nextRadialBursts }
 
 
 burstStationaryCircles : List Circle -> List RadialBurst
@@ -317,34 +330,35 @@ burstStationaryCircles stationaryCircles =
 burstActiveCircle : Model -> Model
 burstActiveCircle ({ activeCircle, radialBursts } as model) =
     let
-        burstActiveCircle =
+        radialBurstFromCircle =
             RadialBurst.create activeCircle
 
         nextRadialBursts =
-            burstActiveCircle :: radialBursts
+            radialBurstFromCircle :: radialBursts
     in
-        { model
-            | radialBursts = nextRadialBursts
-            , activeCircle = Model.initialCircle 0
-        }
+    { model
+        | radialBursts = nextRadialBursts
+        , activeCircle = Model.initialCircle 0
+    }
 
 
-getFromStorage : Cmd Msg
-getFromStorage =
-    LocalStorage.get "sweet-sweet-friction"
-        |> Task.attempt
-            (\result ->
-                case result of
-                    Ok v ->
-                        Load (Maybe.withDefault "0" v)
 
-                    Err _ ->
-                        Load "0"
-            )
-
-
-saveToStorage : Model -> ( Model, Cmd Msg )
-saveToStorage model =
-    LocalStorage.set "sweet-sweet-friction" (toString model.highScore)
-        |> Task.attempt (always NoOp)
-        |> (,) model
+-- getFromStorage : Cmd Msg
+-- getFromStorage =
+--     LocalStorage.get "sweet-sweet-friction"
+--         |> Task.attempt
+--             (\result ->
+--                 case result of
+--                     Ok v ->
+--                         Load (Maybe.withDefault "0" v)
+--
+--                     Err _ ->
+--                         Load "0"
+--             )
+--
+--
+-- saveToStorage : Model -> ( Model, Cmd Msg )
+-- saveToStorage model =
+--     LocalStorage.set "sweet-sweet-friction" (toString model.highScore)
+--         |> Task.attempt (always NoOp)
+--         |> (\b -> ( model, b ))

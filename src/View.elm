@@ -1,16 +1,18 @@
 module View exposing (view)
 
-import Svg exposing (Svg, svg)
-import Svg.Attributes exposing (..)
-import Html exposing (Html)
-import Svg.Events exposing (onClick)
-import TouchEvents exposing (onTouchStart, emptyTouch)
-import Model exposing (Model, State(..))
-import Update exposing (Msg(..))
+-- import TouchEvents exposing (emptyTouch, onTouchStart)
+
 import Bounds
 import CannonAngle
 import Circle exposing (Circle)
+import Html exposing (Html)
+import Html.Events.Extra.Touch as Touch
+import Model exposing (Model, State(..))
 import RadialBurst exposing (RadialBurst)
+import Svg exposing (Svg, svg)
+import Svg.Attributes exposing (..)
+import Svg.Events exposing (onClick)
+import Update exposing (Msg(..))
 
 
 view : Model -> Html Msg
@@ -34,24 +36,25 @@ view model =
         highScorePosition =
             ( Bounds.activeX - scoreX, scoreY )
     in
-        svg
-            [ viewBox gameBoundsToString
-            , onTouchStart UserInput
-            , onClick (UserInput emptyTouch)
-            , Svg.Attributes.style "background: black"
-            , gameDimensions model.windowWidth model.windowHeight
-            , class "noselect"
-            ]
-            [ svgCannonMargin
-            , svgGameTitle model.backgroundTextOpacity
-            , Svg.g [] svgCircles
-            , Svg.g [] svgRadialBursts
-            , svgCannon model.ticks
-            , svgScore model.score scorePosition "Score" "start"
-            , svgScore model.highScore highScorePosition "Hi-Score" "end"
-            , svgCannonCover
-            , svgGameOver model.state
-            ]
+    svg
+        [ viewBox gameBoundsToString
+        , Touch.onStart UserInput
+
+        -- , onClick (UserInput emptyTouch)
+        , Svg.Attributes.style "background: black"
+        , gameDimensions model.windowWidth model.windowHeight
+        , class "noselect"
+        ]
+        [ svgCannonMargin
+        , svgGameTitle model.backgroundTextOpacity
+        , Svg.g [] svgCircles
+        , Svg.g [] svgRadialBursts
+        , svgCannon model.ticks
+        , svgScore model.score scorePosition "Score" "start"
+        , svgScore model.highScore highScorePosition "Hi-Score" "end"
+        , svgCannonCover
+        , svgGameOver model.state
+        ]
 
 
 gameDimensions : Int -> Int -> Svg.Attribute msg
@@ -72,10 +75,11 @@ gameDimensions windowWidth windowHeight =
         windowRatio =
             toFloat width / toFloat height
     in
-        if windowRatio > gameRatio then
-            Svg.Attributes.height ((toString height) ++ "px")
-        else
-            Svg.Attributes.width ((toString width) ++ "px")
+    if windowRatio > gameRatio then
+        Svg.Attributes.height (String.fromInt height ++ "px")
+
+    else
+        Svg.Attributes.width (String.fromInt width ++ "px")
 
 
 
@@ -94,7 +98,7 @@ gameDimensions windowWidth windowHeight =
 
 gameBoundsToString : String
 gameBoundsToString =
-    "0 0 " ++ (toString Bounds.gameX) ++ " " ++ (toString Bounds.gameY)
+    "0 0 " ++ String.fromInt Bounds.gameX ++ " " ++ String.fromInt Bounds.gameY
 
 
 svgCannon : Int -> Svg a
@@ -119,59 +123,59 @@ svgCannon ticks =
             CannonAngle.ticksToSvgAngle ticks
 
         rotationPointX =
-            (toFloat Bounds.gameX) / 2
+            toFloat Bounds.gameX / 2
 
         rotationPointY =
             toFloat (cannonY + cannonHeight)
     in
-        Svg.rect
-            [ x (toString cannonX)
-            , y (toString cannonY)
-            , width (toString cannonWidth)
-            , height (toString cannonHeight)
-            , fill "black"
-            , stroke "white"
-            , strokeWidth "2"
-            , transform (rotateTransform angle rotationPointX rotationPointY)
-            ]
-            []
+    Svg.rect
+        [ x (String.fromInt cannonX)
+        , y (String.fromInt cannonY)
+        , width (String.fromInt cannonWidth)
+        , height (String.fromInt cannonHeight)
+        , fill "black"
+        , stroke "white"
+        , strokeWidth "2"
+        , transform (rotateTransform angle rotationPointX rotationPointY)
+        ]
+        []
 
 
 rotateTransform : Float -> Float -> Float -> String
 rotateTransform angle rotationPointX rotationPointY =
     let
         angleString =
-            toString angle
+            String.fromFloat angle
 
         x =
-            toString rotationPointX
+            String.fromFloat rotationPointX
 
         y =
-            toString rotationPointY
+            String.fromFloat rotationPointY
     in
-        "rotate(" ++ angleString ++ " " ++ x ++ " " ++ y ++ ")"
+    "rotate(" ++ angleString ++ " " ++ x ++ " " ++ y ++ ")"
 
 
 circleToSvg : Circle -> Svg a
 circleToSvg { cx, cy, radius, hitPoints, rotation } =
     Svg.g []
         [ Svg.circle
-            [ Svg.Attributes.cx (toString cx)
-            , Svg.Attributes.cy (toString cy)
-            , r (toString radius)
+            [ Svg.Attributes.cx (String.fromFloat cx)
+            , Svg.Attributes.cy (String.fromFloat cy)
+            , r (String.fromFloat radius)
             , fill "white"
             ]
             []
         , Svg.text_
-            [ x (toString cx)
-            , y (toString cy)
+            [ x (String.fromFloat cx)
+            , y (String.fromFloat cy)
             , fontFamily "Haettenschweiler"
-            , fontSize (toString (radius * 1.8))
+            , fontSize (String.fromFloat (radius * 1.8))
             , textAnchor "middle"
             , dominantBaseline "central"
             , transform (rotateTransform (toFloat rotation) cx cy)
             ]
-            [ Svg.text (toString hitPoints) ]
+            [ Svg.text (String.fromInt hitPoints) ]
         ]
 
 
@@ -184,26 +188,26 @@ svgCannonMargin =
         marginHeight =
             Bounds.activeY + lineThickness // 2
     in
-        Svg.line
-            [ x1 "0"
-            , y1 (toString marginHeight)
-            , x2 (toString Bounds.activeX)
-            , y2 (toString marginHeight)
-            , strokeDasharray "10, 5"
-            , strokeWidth (toString lineThickness)
-            , stroke "white"
-            ]
-            []
+    Svg.line
+        [ x1 "0"
+        , y1 (String.fromInt marginHeight)
+        , x2 (String.fromInt Bounds.activeX)
+        , y2 (String.fromInt marginHeight)
+        , strokeDasharray "10, 5"
+        , strokeWidth (String.fromInt lineThickness)
+        , stroke "white"
+        ]
+        []
 
 
 svgRadialBurst : RadialBurst -> Svg a
 svgRadialBurst { cx, cy, radius, strokeWidth } =
     Svg.circle
-        [ Svg.Attributes.cx (toString cx)
-        , Svg.Attributes.cy (toString cy)
-        , Svg.Attributes.strokeWidth (toString strokeWidth)
+        [ Svg.Attributes.cx (String.fromFloat cx)
+        , Svg.Attributes.cy (String.fromFloat cy)
+        , Svg.Attributes.strokeWidth (String.fromFloat strokeWidth)
         , stroke "white"
-        , r (toString radius)
+        , r (String.fromFloat radius)
         , fill "none"
         ]
         []
@@ -213,17 +217,17 @@ svgScore : Int -> ( Int, Int ) -> String -> String -> Svg a
 svgScore score ( positionX, positionY ) scoreLabel anchor =
     let
         scoreText =
-            scoreLabel ++ ": " ++ (toString score)
+            scoreLabel ++ ": " ++ String.fromInt score
     in
-        Svg.text_
-            [ x (toString positionX)
-            , y (toString (Bounds.gameY - positionY))
-            , fontFamily "Haettenschweiler"
-            , fontSize "30"
-            , fill "white"
-            , textAnchor anchor
-            ]
-            [ Svg.text scoreText ]
+    Svg.text_
+        [ x (String.fromInt positionX)
+        , y (String.fromInt (Bounds.gameY - positionY))
+        , fontFamily "Haettenschweiler"
+        , fontSize "30"
+        , fill "white"
+        , textAnchor anchor
+        ]
+        [ Svg.text scoreText ]
 
 
 svgCannonCover : Svg a
@@ -235,32 +239,32 @@ svgCannonCover =
         radius =
             50
     in
-        Svg.g []
-            [ Svg.circle
-                [ Svg.Attributes.cx (toString cx)
-                , Svg.Attributes.cy (toString cy)
-                , r (toString radius)
-                , fill "white"
-                ]
-                []
-            , Svg.rect
-                [ x (toString (Bounds.gameX // 2 - radius))
-                , y (toString cy)
-                , width (toString (radius * 2))
-                , height (toString (Bounds.gameY - (round cy)))
-                , fill "white"
-                ]
-                []
-            , Svg.text_
-                [ x (toString (Bounds.gameX // 2))
-                , y (toString (Bounds.gameY - 10))
-                , fill "black"
-                , fontFamily "Haettenschweiler"
-                , fontSize "50"
-                , textAnchor "middle"
-                ]
-                [ Svg.text "3210" ]
+    Svg.g []
+        [ Svg.circle
+            [ Svg.Attributes.cx (String.fromFloat cx)
+            , Svg.Attributes.cy (String.fromFloat cy)
+            , r (String.fromInt radius)
+            , fill "white"
             ]
+            []
+        , Svg.rect
+            [ x (String.fromInt (Bounds.gameX // 2 - radius))
+            , y (String.fromFloat cy)
+            , width (String.fromInt (radius * 2))
+            , height (String.fromInt (Bounds.gameY - round cy))
+            , fill "white"
+            ]
+            []
+        , Svg.text_
+            [ x (String.fromInt (Bounds.gameX // 2))
+            , y (String.fromInt (Bounds.gameY - 10))
+            , fill "black"
+            , fontFamily "Haettenschweiler"
+            , fontSize "50"
+            , textAnchor "middle"
+            ]
+            [ Svg.text "3210" ]
+        ]
 
 
 svgGameTitle : Float -> Svg a
@@ -271,7 +275,7 @@ svgGameTitle backgroundTextOpacity =
         , strokeWidth "1px"
         , fontFamily "Haettenschweiler"
         , fontSize "80"
-        , strokeOpacity (toString backgroundTextOpacity)
+        , strokeOpacity (String.fromFloat backgroundTextOpacity)
         ]
         (List.map svgGameTextLine
             [ "SWEET"
@@ -285,14 +289,14 @@ svgGameTextLine : String -> Svg a
 svgGameTextLine text =
     let
         screenCentre =
-            toString (Bounds.gameX // 2)
+            String.fromInt (Bounds.gameX // 2)
     in
-        Svg.tspan
-            [ dy "60"
-            , x screenCentre
-            , textAnchor "middle"
-            ]
-            [ Svg.text text ]
+    Svg.tspan
+        [ dy "60"
+        , x screenCentre
+        , textAnchor "middle"
+        ]
+        [ Svg.text text ]
 
 
 svgGameOver : State -> Svg a
@@ -304,7 +308,7 @@ svgGameOver state =
                 , fill "rgb(255, 163, 255)"
                 , fontFamily "Haettenschweiler"
                 , fontSize "80"
-                , fillOpacity (toString 1)
+                , fillOpacity (String.fromInt 1)
                 ]
                 (List.map svgGameTextLine
                     [ "GAME"

@@ -17,5 +17,6 @@ apply : Vector -> Result
 apply velocity =
     if Vector.magnitude velocity > 0.08 then
         SlowsDownCircle (Vector.scale frictionCoefficient velocity)
+
     else
         CausesStop

@@ -1,11 +1,10 @@
-module Circle.Collision
-    exposing
-        ( nextVelocity
-        , anyCollisions
-        , partitionCircles
-        , velocityAfterCollision
-        , applyDamage
-        )
+module Circle.Collision exposing
+    ( anyCollisions
+    , applyDamage
+    , nextVelocity
+    , partitionCircles
+    , velocityAfterCollision
+    )
 
 import Circle exposing (Circle)
 import Vector exposing (Vector)
@@ -13,7 +12,7 @@ import Vector exposing (Vector)
 
 nextVelocity : Vector -> Circle -> List Circle -> Vector
 nextVelocity velocity activeCircle collidingCircles =
-    case List.head (collidingCircles) of
+    case List.head collidingCircles of
         Just collidingCircle ->
             velocityAfterCollision collidingCircle activeCircle velocity
 
@@ -50,7 +49,7 @@ collision circle1 circle2 =
         collisionDistance =
             circle1.radius + circle2.radius + tolerance
     in
-        distanceBetweenCircleCentres <= collisionDistance
+    distanceBetweenCircleCentres <= collisionDistance
 
 
 
@@ -64,7 +63,7 @@ velocityAfterCollision stationaryCircle activeCircle velocity =
         mirror =
             unitMirrorVector stationaryCircle activeCircle
     in
-        Vector.subtract velocity (Vector.scale (2 * Vector.dotProduct velocity mirror) mirror)
+    Vector.subtract velocity (Vector.scale (2 * Vector.dotProduct velocity mirror) mirror)
 
 
 unitMirrorVector : Circle -> Circle -> Vector

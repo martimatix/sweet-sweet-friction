@@ -1,4 +1,4 @@
-module RadialBurst exposing (..)
+module RadialBurst exposing (RadialBurst, advance, create, visible)
 
 import Circle exposing (Circle)
 

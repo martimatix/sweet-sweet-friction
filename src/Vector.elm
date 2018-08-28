@@ -1,14 +1,13 @@
-module Vector
-    exposing
-        ( Vector
-        , add
-        , subtract
-        , dotProduct
-        , scale
-        , negate
-        , normalise
-        , magnitude
-        )
+module Vector exposing
+    ( Vector
+    , add
+    , dotProduct
+    , magnitude
+    , negate
+    , normalise
+    , scale
+    , subtract
+    )
 
 
 type alias Vector =
@@ -46,7 +45,7 @@ normalise ( a, b ) =
         length =
             magnitude ( a, b )
     in
-        ( a / length, b / length )
+    ( a / length, b / length )
 
 
 magnitude : Vector -> Float

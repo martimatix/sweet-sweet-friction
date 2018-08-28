@@ -1,9 +1,9 @@
-module Model exposing (..)
+module Model exposing (Model, State(..), initial, initialCircle, initialRadius)
 
-import Circle exposing (Circle)
-import Vector exposing (Vector)
 import Bounds
+import Circle exposing (Circle)
 import RadialBurst exposing (RadialBurst)
+import Vector exposing (Vector)
 
 
 type alias Model =
@@ -38,19 +38,19 @@ initial =
         windowMargin =
             16
     in
-        { stationaryCircles = []
-        , activeCircle = (initialCircle initialRotation)
-        , radialBursts = []
-        , velocity = ( 0, 0 )
-        , ticks = 0
-        , state = Waiting
-        , score = 0
-        , highScore = 0
-        , windowWidth = windowMargin
-        , windowHeight = windowMargin
-        , backgroundTextOpacity = 1
-        , debounceTicks = 0
-        }
+    { stationaryCircles = []
+    , activeCircle = initialCircle initialRotation
+    , radialBursts = []
+    , velocity = ( 0, 0 )
+    , ticks = 0
+    , state = Waiting
+    , score = 0
+    , highScore = 0
+    , windowWidth = windowMargin
+    , windowHeight = windowMargin
+    , backgroundTextOpacity = 1
+    , debounceTicks = 0
+    }
 
 
 initialCircle : Int -> Circle
@@ -67,7 +67,7 @@ initialCircle rotation =
         distanceOfCannonFromFloor =
             20
     in
-        (Circle cx cy initialRadius 3 rotation)
+    Circle cx cy initialRadius 3 rotation
 
 
 initialRadius : Float

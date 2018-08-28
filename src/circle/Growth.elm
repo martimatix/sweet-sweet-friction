@@ -1,8 +1,8 @@
 module Circle.Growth exposing (growthIncrement, ticksToFullSize)
 
-import Model
-import Circle exposing (Circle)
 import Bounds
+import Circle exposing (Circle)
+import Model
 
 
 growthIncrement : Circle -> List Circle -> Float
@@ -11,7 +11,7 @@ growthIncrement activeCircle stationaryCircles =
         distanceToGrow =
             targetRadius activeCircle stationaryCircles - Model.initialRadius
     in
-        distanceToGrow / toFloat ticksToFullSize
+    distanceToGrow / toFloat ticksToFullSize
 
 
 targetRadius : Circle -> List Circle -> Float
@@ -23,12 +23,12 @@ targetRadius activeCircle stationaryCircles =
         distanceToWalls =
             [ activeCircle.cx
             , activeCircle.cy
-            , (toFloat Bounds.activeX) - activeCircle.cx
-            , (toFloat Bounds.activeY) - activeCircle.cy
+            , toFloat Bounds.activeX - activeCircle.cx
+            , toFloat Bounds.activeY - activeCircle.cy
             ]
     in
-        List.minimum (distanceToCircleEdges ++ distanceToWalls)
-            |> Maybe.withDefault Model.initialRadius
+    List.minimum (distanceToCircleEdges ++ distanceToWalls)
+        |> Maybe.withDefault Model.initialRadius
 
 
 distanceToCircleEdge : Circle -> Circle -> Float
@@ -37,7 +37,7 @@ distanceToCircleEdge activeCircle stationaryCircle =
         distanceBetweenCircles =
             Circle.distanceBetweenCentres activeCircle stationaryCircle
     in
-        distanceBetweenCircles - stationaryCircle.radius
+    distanceBetweenCircles - stationaryCircle.radius
 
 
 ticksToFullSize : Int

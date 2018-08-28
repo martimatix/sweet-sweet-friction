@@ -1,4 +1,4 @@
-module CannonAngle exposing (..)
+module CannonAngle exposing (ticksToAngle, ticksToSvgAngle)
 
 
 ticksToSvgAngle : Int -> Float
@@ -8,4 +8,4 @@ ticksToSvgAngle ticks =
 
 ticksToAngle : Int -> Int
 ticksToAngle ticks =
-    180 - abs (180 - (ticks % 360))
+    180 - abs (180 - modBy 360 ticks)

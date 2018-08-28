@@ -5,7 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Sweet Sweet Friction</title>
-  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0,target-densitydpi=device-dpi, user-scalable=no" />
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
   <script src="elm.js"></script>
   <style>
     @font-face {
@@ -34,8 +34,9 @@
   </style>
 </head>
 <body>
+  <div id="elm-target"></div>
   <script type="text/javascript">
-    Elm.Main.fullscreen();
+    Elm.Main.init({ node: document.getElementById("elm-target") });
   </script>
 </body>
 </html>

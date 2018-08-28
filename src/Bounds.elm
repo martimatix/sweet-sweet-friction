@@ -1,4 +1,4 @@
-module Bounds exposing (..)
+module Bounds exposing (activeX, activeY, gameX, gameY)
 
 
 gameX : Int
@@ -22,4 +22,4 @@ activeY =
         cannonMargin =
             110
     in
-        gameY - cannonMargin
+    gameY - cannonMargin
