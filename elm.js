@@ -6340,6 +6340,10 @@ var author$project$View$circleToSvg = function (_n0) {
 					]))
 			]));
 };
+var author$project$View$emptyTouch = function () {
+	var keys = {aH: false, aP: false, bk: false};
+	return {aL: _List_Nil, a3: keys, bn: _List_Nil, br: _List_Nil};
+}();
 var author$project$View$gameBoundsToString = '0 0 ' + (elm$core$String$fromInt(author$project$Bounds$gameX) + (' ' + elm$core$String$fromInt(author$project$Bounds$gameY)));
 var elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
 var elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
@@ -6583,10 +6587,26 @@ var elm$svg$Svg$svg = elm$svg$Svg$trustedNode('svg');
 var elm$svg$Svg$Attributes$class = _VirtualDom_attribute('class');
 var elm$svg$Svg$Attributes$style = _VirtualDom_attribute('style');
 var elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 0, a: a};
+};
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var elm$svg$Svg$Events$onClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'click',
+		elm$json$Json$Decode$succeed(msg));
+};
 var elm$virtual_dom$VirtualDom$Custom = function (a) {
 	return {$: 3, a: a};
 };
-var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
 var elm$html$Html$Events$custom = F2(
 	function (event, decoder) {
 		return A2(
@@ -6721,6 +6741,8 @@ var author$project$View$view = function (model) {
 			[
 				elm$svg$Svg$Attributes$viewBox(author$project$View$gameBoundsToString),
 				mpizenberg$elm_pointer_events$Html$Events$Extra$Touch$onStart(author$project$Update$UserInput),
+				elm$svg$Svg$Events$onClick(
+				author$project$Update$UserInput(author$project$View$emptyTouch)),
 				elm$svg$Svg$Attributes$style('background: black'),
 				A2(author$project$View$gameDimensions, model.aF, model.aE),
 				elm$svg$Svg$Attributes$class('noselect')

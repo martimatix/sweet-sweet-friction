@@ -39,8 +39,7 @@ view model =
     svg
         [ viewBox gameBoundsToString
         , Touch.onStart UserInput
-
-        -- , onClick (UserInput emptyTouch)
+        , onClick (UserInput emptyTouch)
         , Svg.Attributes.style "background: black"
         , gameDimensions model.windowWidth model.windowHeight
         , class "noselect"
@@ -80,20 +79,6 @@ gameDimensions windowWidth windowHeight =
 
     else
         Svg.Attributes.width (String.fromInt width ++ "px")
-
-
-
--- clickEvent : State -> Msg
--- clickEvent state =
---     case state of
---         Waiting ->
---             FireCannon
---
---         GameOver ->
---             NewGame
---
---         _ ->
---             NoOp
 
 
 gameBoundsToString : String
@@ -318,3 +303,19 @@ svgGameOver state =
 
         _ ->
             Svg.g [] []
+
+
+emptyTouch : Touch.Event
+emptyTouch =
+    let
+        keys =
+            { alt = False
+            , ctrl = False
+            , shift = False
+            }
+    in
+    { keys = keys
+    , changedTouches = []
+    , targetTouches = []
+    , touches = []
+    }
