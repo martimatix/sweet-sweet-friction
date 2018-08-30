@@ -36,7 +36,15 @@
 <body>
   <div id="elm-target"></div>
   <script type="text/javascript">
-    Elm.Main.init({ node: document.getElementById("elm-target") });
+    var highScore = parseInt(localStorage.getItem('sweetSweetFriction:highScore')) || 0;
+    var app = Elm.Main.init({
+      node: document.getElementById("elm-target"),
+      flags: highScore,
+    });
+
+    app.ports.saveHighScore.subscribe(function(score) {
+      localStorage.setItem('sweetSweetFriction:highScore', score);
+    });
   </script>
 </body>
 </html>

@@ -1,8 +1,5 @@
 module Main exposing (initialSizeCmd, main, sizeToMsg, subscriptions)
 
--- import AnimationFrame
--- animation frame is now part of the browser https://package.elm-lang.org/packages/elm/browser/latest/Browser-Events#onAnimationFrame
-
 import Browser
 import Browser.Dom as Dom
 import Browser.Events as Events
@@ -22,9 +19,9 @@ main =
         }
 
 
-init : () -> ( Model, Cmd Msg )
-init flags =
-    ( Model.initial
+init : Int -> ( Model, Cmd Msg )
+init highScore =
+    ( Model.initial highScore
     , Cmd.batch
         [ Task.perform (always Init) (Task.succeed 0)
         , initialSizeCmd

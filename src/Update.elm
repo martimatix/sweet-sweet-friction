@@ -1,7 +1,4 @@
-module Update exposing (Msg(..), update)
-
--- use https://github.com/mpizenberg/elm-pointer-events
--- Use Browser.Dom to get the current window size, and use Browser.Events to detect when the window changes size or is not visible at the moment.
+port module Update exposing (Msg(..), update)
 
 import Bounds
 import Browser.Dom
@@ -12,11 +9,15 @@ import Circle.Collision as CC
 import Circle.Growth as Growth
 import Friction exposing (Result(..))
 import Html.Events.Extra.Touch as Touch
+import Json.Encode as E
 import Model exposing (..)
 import RadialBurst exposing (RadialBurst)
 import Task exposing (Task)
 import Vector exposing (Vector)
 import WallCollision as WC
+
+
+port saveHighScore : Int -> Cmd msg
 
 
 type Msg
@@ -39,10 +40,9 @@ update msg model =
                 |> incrementDebounceTick
                 |> radialBurst
                 |> animateState
-            , Cmd.none
+            , saveToStorage model
             )
 
-        -- |> saveToStorage
         UserInput touch ->
             debounceAction model
 
@@ -105,14 +105,13 @@ newGame : Model -> ( Model, Cmd msg )
 newGame model =
     let
         initialModel =
-            Model.initial
+            Model.initial model.highScore
 
         nextRadialBursts =
             burstStationaryCircles model.stationaryCircles
     in
     ( { initialModel
-        | highScore = model.highScore
-        , windowWidth = model.windowWidth
+        | windowWidth = model.windowWidth
         , windowHeight = model.windowHeight
         , backgroundTextOpacity = 0
         , radialBursts = nextRadialBursts
@@ -342,23 +341,6 @@ burstActiveCircle ({ activeCircle, radialBursts } as model) =
     }
 
 
-
--- getFromStorage : Cmd Msg
--- getFromStorage =
---     LocalStorage.get "sweet-sweet-friction"
---         |> Task.attempt
---             (\result ->
---                 case result of
---                     Ok v ->
---                         Load (Maybe.withDefault "0" v)
---
---                     Err _ ->
---                         Load "0"
---             )
---
---
--- saveToStorage : Model -> ( Model, Cmd Msg )
--- saveToStorage model =
---     LocalStorage.set "sweet-sweet-friction" (toString model.highScore)
---         |> Task.attempt (always NoOp)
---         |> (\b -> ( model, b ))
+saveToStorage : Model -> Cmd Msg
+saveToStorage model =
+    model.highScore |> saveHighScore

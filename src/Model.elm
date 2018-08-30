@@ -29,8 +29,8 @@ type State
     | GameOver
 
 
-initial : Model
-initial =
+initial : Int -> Model
+initial highScore =
     let
         initialRotation =
             5
@@ -45,7 +45,7 @@ initial =
     , ticks = 0
     , state = Waiting
     , score = 0
-    , highScore = 0
+    , highScore = highScore
     , windowWidth = windowMargin
     , windowHeight = windowMargin
     , backgroundTextOpacity = 1

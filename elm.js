@@ -5095,14 +5095,14 @@ var author$project$Model$initialCircle = function (rotation) {
 	var cx = (author$project$Bounds$gameX / 2) | 0;
 	return A5(author$project$Circle$Circle, cx, cy, author$project$Model$initialRadius, 3, rotation);
 };
-var author$project$Model$initial = function () {
+var author$project$Model$initial = function (highScore) {
 	var windowMargin = 16;
 	var initialRotation = 5;
 	return {
 		T: author$project$Model$initialCircle(initialRotation),
 		V: 1,
 		Z: 0,
-		ac: 0,
+		ac: highScore,
 		at: _List_Nil,
 		ax: 0,
 		ay: author$project$Model$Waiting,
@@ -5112,16 +5112,16 @@ var author$project$Model$initial = function () {
 		aE: windowMargin,
 		aF: windowMargin
 	};
-}();
+};
 var author$project$Update$Init = {$: 0};
 var elm$core$Basics$always = F2(
 	function (a, _n0) {
 		return a;
 	});
 var elm$core$Platform$Cmd$batch = _Platform_batch;
-var author$project$Main$init = function (flags) {
+var author$project$Main$init = function (highScore) {
 	return _Utils_Tuple2(
-		author$project$Model$initial,
+		author$project$Model$initial(highScore),
 		elm$core$Platform$Cmd$batch(
 			_List_fromArray(
 				[
@@ -6166,11 +6166,11 @@ var author$project$Update$burstStationaryCircles = function (stationaryCircles) 
 };
 var author$project$Update$newGame = function (model) {
 	var nextRadialBursts = author$project$Update$burstStationaryCircles(model.az);
-	var initialModel = author$project$Model$initial;
+	var initialModel = author$project$Model$initial(model.ac);
 	return _Utils_Tuple2(
 		_Utils_update(
 			initialModel,
-			{V: 0, ac: model.ac, at: nextRadialBursts, aE: model.aE, aF: model.aF}),
+			{V: 0, at: nextRadialBursts, aE: model.aE, aF: model.aF}),
 		elm$core$Platform$Cmd$none);
 };
 var author$project$Update$action = function (model) {
@@ -6228,6 +6228,11 @@ var author$project$Update$radialBurst = function (model) {
 		model,
 		{at: nextRadialBursts});
 };
+var elm$json$Json$Encode$int = _Json_wrap;
+var author$project$Update$saveHighScore = _Platform_outgoingPort('saveHighScore', elm$json$Json$Encode$int);
+var author$project$Update$saveToStorage = function (model) {
+	return author$project$Update$saveHighScore(model.ac);
+};
 var author$project$Update$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -6238,7 +6243,7 @@ var author$project$Update$update = F2(
 					author$project$Update$animateState(
 						author$project$Update$radialBurst(
 							author$project$Update$incrementDebounceTick(model))),
-					elm$core$Platform$Cmd$none);
+					author$project$Update$saveToStorage(model));
 			case 2:
 				var touch = msg.a;
 				return author$project$Update$debounceAction(model);
@@ -6763,5 +6768,4 @@ var author$project$View$view = function (model) {
 var elm$browser$Browser$element = _Browser_element;
 var author$project$Main$main = elm$browser$Browser$element(
 	{a1: author$project$Main$init, bm: author$project$Main$subscriptions, bs: author$project$Update$update, bu: author$project$View$view});
-_Platform_export({'Main':{'init':author$project$Main$main(
-	elm$json$Json$Decode$succeed(0))(0)}});}(this));
+_Platform_export({'Main':{'init':author$project$Main$main(elm$json$Json$Decode$int)(0)}});}(this));
