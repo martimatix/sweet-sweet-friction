@@ -5118,8 +5118,18 @@ var elm$core$Basics$always = F2(
 	function (a, _n0) {
 		return a;
 	});
+var elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (!maybe.$) {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
 var elm$core$Platform$Cmd$batch = _Platform_batch;
-var author$project$Main$init = function (highScore) {
+var author$project$Main$init = function (maybeHighScore) {
+	var highScore = A2(elm$core$Maybe$withDefault, 0, maybeHighScore);
 	return _Utils_Tuple2(
 		author$project$Model$initial(highScore),
 		elm$core$Platform$Cmd$batch(
@@ -5754,15 +5764,6 @@ var elm$core$List$minimum = function (list) {
 		return elm$core$Maybe$Nothing;
 	}
 };
-var elm$core$Maybe$withDefault = F2(
-	function (_default, maybe) {
-		if (!maybe.$) {
-			var value = maybe.a;
-			return value;
-		} else {
-			return _default;
-		}
-	});
 var author$project$Circle$Growth$targetRadius = F2(
 	function (activeCircle, stationaryCircles) {
 		var distanceToWalls = _List_fromArray(
@@ -6766,6 +6767,14 @@ var author$project$View$view = function (model) {
 			]));
 };
 var elm$browser$Browser$element = _Browser_element;
+var elm$json$Json$Decode$null = _Json_decodeNull;
+var elm$json$Json$Decode$oneOf = _Json_oneOf;
 var author$project$Main$main = elm$browser$Browser$element(
 	{a1: author$project$Main$init, bm: author$project$Main$subscriptions, bs: author$project$Update$update, bu: author$project$View$view});
-_Platform_export({'Main':{'init':author$project$Main$main(elm$json$Json$Decode$int)(0)}});}(this));
+_Platform_export({'Main':{'init':author$project$Main$main(
+	elm$json$Json$Decode$oneOf(
+		_List_fromArray(
+			[
+				elm$json$Json$Decode$null(elm$core$Maybe$Nothing),
+				A2(elm$json$Json$Decode$map, elm$core$Maybe$Just, elm$json$Json$Decode$int)
+			])))(0)}});}(this));

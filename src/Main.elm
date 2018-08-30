@@ -19,8 +19,12 @@ main =
         }
 
 
-init : Int -> ( Model, Cmd Msg )
-init highScore =
+init : Maybe Int -> ( Model, Cmd Msg )
+init maybeHighScore =
+    let
+        highScore =
+            Maybe.withDefault 0 maybeHighScore
+    in
     ( Model.initial highScore
     , Cmd.batch
         [ Task.perform (always Init) (Task.succeed 0)

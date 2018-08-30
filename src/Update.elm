@@ -9,7 +9,6 @@ import Circle.Collision as CC
 import Circle.Growth as Growth
 import Friction exposing (Result(..))
 import Html.Events.Extra.Touch as Touch
-import Json.Encode as E
 import Model exposing (..)
 import RadialBurst exposing (RadialBurst)
 import Task exposing (Task)
